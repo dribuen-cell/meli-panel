@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JA Comercial — Painel MELI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&swap');
+&root { --am:#FFE600;--am2:#FFD000;--az:#1059C5;--ve:#00A650;--vm:#E53935;--bg:#F5F5F5;--br:#FFF;--c1:#FAFAFA;--c2:#F0F0F0;--c3:#E0E0E0;--c4:#9E9E9E;--c5:#616161;--pr:#1A1A1A;--sh:0 2px 8px rgba(0,0,0,.08) }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--pr);min-height:100vh}
+#tela-login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1059C5,#0A3D8F)}
+.lcard{background:var(--br);border-radius:16px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.btn-login{width:100%;height:48px;background:var(--am);border:none;border-radius:8px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="tela-login">
+  <div class="lcard">
+    <h1 style="margin-bottom:24px;font-size:20px">JA Comercial -- Painel MELI</h1>
+    <div style="margin-bottom:16px"><label style="display:block;margin-bottom:6px;font-weight:500">Usuário</label><input id="iu" style="width:100%;height:44px;border:1.5px solid #E0E0E0;border-radius:8px;padding:0 14px;font-size:15px;font-family:inherit;outline:none" value="adriana"></div>
+    <div style="margin-bottom:16px"><label style="display:block;margin-bottom:6px;font-weight:500">Senha</label><input type="password" id="is" style="width:100%;height:44px;border:1.5px solid #E0E0E0;border-radius:8px;padding:0 14px;font-size:15px;font-family:inherit;outline:none"></div>
+    <button class="btn-login" onclick="login()">Entrar</button>
+  </div>
+</div>
+<script>
+async function login() {
+  const usuario = document.getElementById('iu').value;
+  const senha = document.getElementById('is').value;
+  try {
+    const r = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({usuario, senha}) });
+    const d = await r.json();
+    if (d.ok) { alert('Bem-vindo, ' + d.nome + '! Aplicativo funcionando corretamente. A interface completa será carregada em breve.'); }
+    else { alert('Erro: ' + d.erro); }
+  } catch(e) { alert('Erro de conexão. Verifique se o servidor está ativo.'); }
+}
+</script>
+</body>
+</html>
