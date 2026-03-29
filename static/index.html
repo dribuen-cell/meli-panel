@@ -312,6 +312,34 @@
             </div>
           </div>
 
+          <!-- FOTO PADRÃO -->
+          <div id="foto-padrao-item" class="foto-banco-item" style="border-color:var(--az);background:#EEF4FF;margin-bottom:16px">
+            <div class="fb-variacao" style="flex:0 0 150px">
+              <label style="color:var(--az);font-size:10px">📷 FOTO PADRÃO</label>
+              <span style="font-size:11px;color:var(--c5);line-height:1.5;display:block;margin-top:2px">Usada quando não há foto específica para a variação</span>
+              <div id="fp-status" style="margin-top:6px"><span class="foto-status-pend">⚠ não definida</span></div>
+            </div>
+            <div class="fb-fotos" style="flex:1">
+              <label>Fotos</label>
+              <div class="fb-tabs">
+                <button class="fb-tab ativo" id="fpt-od" onclick="setFpModo('onedrive')">☁ OneDrive</button>
+                <button class="fb-tab" id="fpt-up" onclick="setFpModo('upload')">⬆ Upload</button>
+              </div>
+              <div id="fp-path-area" style="display:block">
+                <div class="fb-path-row">
+                  <span class="fb-tipo-label fb-tipo-od">OneDrive</span>
+                  <input class="fb-path-input" id="fp-inp" placeholder="Cole o link do OneDrive com a foto padrão..." oninput="onFotoPadraoPath(this.value)">
+                </div>
+              </div>
+              <div id="fp-upload-area" style="display:none">
+                <div class="fb-drop" id="fp-drop">
+                  📷 Clique aqui ou arraste a foto padrão
+                  <input type="file" multiple accept="image/*" onchange="onFotoPadraoFiles(this)">
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div id="fotos-banco" class="fotos-banco"></div>
           <button class="add-foto-banco" onclick="addFotoBanco()">+ Adicionar variação com fotos</button>
         </div>
@@ -418,6 +446,7 @@ const contas = { c1:true, c2:false };
 
 // banco: { id, variacao, modo:'onedrive'|'pasta'|'upload', valor, files, ok }
 const bancoDeFotos = {};
+let fotoPadrao = null; // {modo, valor, files, ok}
 
 // LOGIN
 function login(){
@@ -536,12 +565,46 @@ function rmFotoBanco(id){
   atualizarTabelaFotoRefs();
 }
 
-// busca fotos para nome de variação
+// ── FOTO PADRÃO ──────────────────────────────────────────────
+function setFpModo(modo){
+  ['od','up'].forEach(m=>{
+    document.getElementById('fpt-'+m)?.classList.toggle('ativo',
+      (m==='od'&&modo==='onedrive')||(m==='up'&&modo==='upload'));
+  });
+  document.getElementById('fp-path-area').style.display=(modo==='upload'?'none':'block');
+  document.getElementById('fp-upload-area').style.display=(modo==='upload'?'block':'none');
+  if(fotoPadrao){fotoPadrao.modo=modo;fotoPadrao.ok=false;}
+  else fotoPadrao={modo,valor:'',files:[],ok:false};
+  atualizarTabelaFotoRefs();
+}
+function onFotoPadraoPath(val){
+  fotoPadrao={modo:'onedrive',valor:val,files:[],ok:val.trim().length>4};
+  const st=document.getElementById('fp-status');
+  if(st) st.innerHTML=fotoPadrao.ok?'<span class="foto-status-ok">✓ Definida</span>':'<span class="foto-status-pend">⚠ não definida</span>';
+  atualizarTabelaFotoRefs();
+}
+function onFotoPadraoFiles(input){
+  const files=Array.from(input.files);
+  fotoPadrao={modo:'upload',valor:'',files,ok:files.length>0};
+  const drop=document.getElementById('fp-drop');
+  const st=document.getElementById('fp-status');
+  if(files.length>0){
+    const thumbs=files.slice(0,5).map(f=>`<img class="fb-thumb" src="${URL.createObjectURL(f)}">`).join('');
+    drop.classList.add('ok');
+    drop.innerHTML=`<div class="thumbs">${thumbs}</div> <span class="fb-count">${files.length} foto${files.length>1?'s':''}</span><input type="file" multiple accept="image/*" onchange="onFotoPadraoFiles(this)">`;
+    if(st) st.innerHTML='<span class="foto-status-ok">✓ Definida</span>';
+  }
+  atualizarTabelaFotoRefs();
+}
+
+// busca fotos para nome de variação (com fallback para foto padrão)
 function getFotoParaVariacao(nome){
   const n=nome.trim().toLowerCase();
   for(const b of Object.values(bancoDeFotos)){
     if(b.variacao.trim().toLowerCase()===n && b.ok) return b;
   }
+  // fallback: foto padrão
+  if(fotoPadrao && fotoPadrao.ok) return fotoPadrao;
   return null;
 }
 
@@ -553,12 +616,17 @@ function atualizarTabelaFotoRefs(){
     if(!varInp||!cell) return;
     const nome=varInp.value.trim();
     const b=nome?getFotoParaVariacao(nome):null;
+    const isPadrao=b&&b===fotoPadrao;
     if(b){
-      let desc='';
-      if(b.modo==='onedrive') desc='☁ OneDrive';
-      else if(b.modo==='pasta') desc='📁 Pasta';
-      else desc=`${b.files.length} foto${b.files.length>1?'s':''}`;
-      cell.innerHTML=`<span class="foto-ref-badge ok">✓ ${desc}</span>`;
+      if(isPadrao){
+        cell.innerHTML=`<span class="foto-ref-badge ok" style="background:#EEF4FF;color:var(--az)">📷 Padrão</span>`;
+      } else {
+        let desc='';
+        if(b.modo==='onedrive') desc='☁ OneDrive';
+        else if(b.modo==='pasta') desc='📁 Pasta';
+        else desc=`${b.files.length} foto${b.files.length>1?'s':''}`;
+        cell.innerHTML=`<span class="foto-ref-badge ok">✓ ${desc}</span>`;
+      }
     } else if(nome){
       cell.innerHTML=`<span class="foto-ref-badge pend">⚠ sem fotos</span>`;
     } else {
@@ -601,6 +669,43 @@ function clonarDeCima(id){
   toast('Linha copiada','ok');
 }
 
+// ── COLAR COLUNA (estilo Excel) ──────────────────────────────
+function setupPaste(id){
+  const cols=['fam','var','preco','est','ean','sku','peso','alt','lar','comp'];
+  cols.forEach(col=>{
+    const inp=document.getElementById(col+id);
+    if(!inp) return;
+    inp.addEventListener('paste',e=>{
+      const text=(e.clipboardData||window.clipboardData).getData('text');
+      const lines=text.split(/
+?
+/).map(l=>l.trim());
+      while(lines.length>0&&lines[lines.length-1]==='') lines.pop();
+      if(lines.length<=1) return; // colar valor único: comportamento normal
+      e.preventDefault();
+      const rows=Array.from(document.querySelectorAll('#tbody tr'));
+      const idx=rows.findIndex(r=>r.id==='ln'+id);
+      if(idx<0) return;
+      // criar linhas extras se necessário
+      const needed=(idx+lines.length)-rows.length;
+      for(let i=0;i<needed;i++) addLinha();
+      // preencher valores
+      const updRows=Array.from(document.querySelectorAll('#tbody tr'));
+      lines.forEach((val,i)=>{
+        const rid=updRows[idx+i]?.id.replace('ln','');
+        if(!rid) return;
+        const t=document.getElementById(col+rid);
+        if(t){
+          t.value=val;
+          t.dispatchEvent(new Event('input',{bubbles:true}));
+        }
+      });
+      atualizarTabelaFotoRefs();
+      toast(lines.length+' células coladas','ok');
+    });
+  });
+}
+
 // ADD / REMOVE LINHA
 function addLinha(){
   linhaId++;
@@ -633,6 +738,7 @@ function addLinha(){
     </td>`;
   document.getElementById('tbody').appendChild(tr);
   setupFam(id);
+  setupPaste(id);
 }
 
 function rmLinha(id){document.getElementById('ln'+id)?.remove();}
