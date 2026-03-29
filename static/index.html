@@ -677,9 +677,7 @@ function setupPaste(id){
     if(!inp) return;
     inp.addEventListener('paste',e=>{
       const text=(e.clipboardData||window.clipboardData).getData('text');
-      const lines=text.split(/
-?
-/).map(l=>l.trim());
+      const lines=text.split(/\n|\r\n|\r/).map(l=>l.trim());
       while(lines.length>0&&lines[lines.length-1]==='') lines.pop();
       if(lines.length<=1) return; // colar valor único: comportamento normal
       e.preventDefault();
