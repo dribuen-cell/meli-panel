@@ -1014,19 +1014,16 @@ function limparLogs() {
 
 function exportarLogs() {
   const logs = carregarLogs();
+  const sep = '\n─────────────────────────────\n';
   const txt = logs.map(l => {
     const linhas = (l.resultados||[]).map(r =>
-      `  ${r.ok?'✓':'✗'} ${r.conta||''} | ${r.variacao||''} → ${r.ok?(r.mlb_criado||'OK'):r.erro||'erro'}`
-    ).join('
-');
-    return `[${l.ts}] ${l.tipo.toUpperCase()} — ${l.resumo||''}
-${linhas}`;
-  }).join('
-─────────────────────────────
-');
+      '  ' + (r.ok?'OK':'ERR') + ' ' + (r.conta||'') + ' | ' + (r.variacao||'') + ' -> ' + (r.ok?(r.mlb_criado||'OK'):(r.erro||'erro'))
+    ).join('\n');
+    return '[' + l.ts + '] ' + l.tipo.toUpperCase() + ' - ' + (l.resumo||'') + '\n' + linhas;
+  }).join(sep);
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
-  a.download = `meli-logs-${new Date().toISOString().slice(0,10)}.txt`;
+  a.download = 'meli-logs-' + new Date().toISOString().slice(0,10) + '.txt';
   a.click();
 }
 
@@ -1466,19 +1463,16 @@ function limparLogs() {
 
 function exportarLogs() {
   const logs = carregarLogs();
+  const sep = '\n─────────────────────────────\n';
   const txt = logs.map(l => {
     const linhas = (l.resultados||[]).map(r =>
-      `  ${r.ok?'✓':'✗'} ${r.conta||''} | ${r.variacao||''} → ${r.ok?(r.mlb_criado||'OK'):r.erro||'erro'}`
-    ).join('
-');
-    return `[${l.ts}] ${l.tipo.toUpperCase()} — ${l.resumo||''}
-${linhas}`;
-  }).join('
-─────────────────────────────
-');
+      '  ' + (r.ok?'OK':'ERR') + ' ' + (r.conta||'') + ' | ' + (r.variacao||'') + ' -> ' + (r.ok?(r.mlb_criado||'OK'):(r.erro||'erro'))
+    ).join('\n');
+    return '[' + l.ts + '] ' + l.tipo.toUpperCase() + ' - ' + (l.resumo||'') + '\n' + linhas;
+  }).join(sep);
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
-  a.download = `meli-logs-${new Date().toISOString().slice(0,10)}.txt`;
+  a.download = 'meli-logs-' + new Date().toISOString().slice(0,10) + '.txt';
   a.click();
 }
 
