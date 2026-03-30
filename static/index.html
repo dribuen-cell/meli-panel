@@ -265,6 +265,7 @@ const FOTO_PADRAO_EMBED = {
         <div class="ni" onclick="nav('historico',this)"><span class="nic">◷</span>Todos os Registros</div>
         <div class="nsec">Configurações</div>
         <div class="ni" onclick="nav('token',this)"><span class="nic">⬡</span>Token MELI</div>
+        <div class="ni" onclick="nav('logs',this)"><span class="nic">📋</span>Logs</div>
       </div>
       <div class="suser">
         <div class="av" id="uav">AD</div>
@@ -279,7 +280,10 @@ const FOTO_PADRAO_EMBED = {
       <section id="sec-dashboard" class="sec ativa">
         <div class="ph">
           <div><h2>Dashboard</h2><p>Visão geral das variações criadas</p></div>
-          <button class="bp" onclick="nav('variacoes',document.querySelectorAll('.ni')[1])">✦ Nova Variação</button>
+          <div style="display:flex;gap:8px">
+            <button class="bs" onclick="atualizarDashboard()" id="btn-refresh-dash">↻ Atualizar</button>
+            <button class="bp" onclick="nav('variacoes',document.querySelectorAll('.ni')[1])">✦ Nova Variação</button>
+          </div>
         </div>
         <div class="sgrid">
           <div class="sc"><div class="sl">Criadas hoje</div><div class="sv az">3</div><div class="ss">Vermelho VEC — Kit 4, 6 e 8</div></div>
@@ -446,6 +450,18 @@ const FOTO_PADRAO_EMBED = {
           <input type="text" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx" style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;background:var(--c1)"></div>
           <div class="brow" style="margin-top:12px"><button class="bp" onclick="toast('Token Conta 2 renovado!','ok')">Renovar token</button></div>
         </div>
+      </section>
+
+    <!-- LOGS -->
+      <section id="sec-logs" class="sec">
+        <div class="ph">
+          <div><h2>Logs de Execução</h2><p>Histórico detalhado de todas as chamadas à API MELI</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="bs" onclick="exportarLogs()">↓ Exportar</button>
+            <button class="bs" onclick="limparLogs()" style="color:var(--vm)">✕ Limpar</button>
+          </div>
+        </div>
+        <div id="logs-container"></div>
       </section>
 
     </main>
@@ -964,6 +980,120 @@ function toast(msg,tipo){
 }
 document.getElementById('is')?.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 
+
+// ═══════════════════════════════════════════════════════════
+// LOGS — registro persistente de cada chamada à API MELI
+// ═══════════════════════════════════════════════════════════
+const LOGS_KEY = 'meli_panel_logs';
+const MAX_LOGS = 200;
+
+function adicionarLog(tipo, dados) {
+  try {
+    const logs = carregarLogs();
+    logs.unshift({
+      id: Date.now(),
+      ts: new Date().toISOString(),
+      tipo, // 'criar'|'simular'|'token'|'erro'
+      ...dados
+    });
+    if(logs.length > MAX_LOGS) logs.splice(MAX_LOGS);
+    localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+    if(document.getElementById('sec-logs')?.classList.contains('ativa')) renderizarLogs();
+  } catch(e){}
+}
+
+function carregarLogs() {
+  try { return JSON.parse(localStorage.getItem(LOGS_KEY)||'[]'); } catch(e){ return []; }
+}
+
+function limparLogs() {
+  localStorage.removeItem(LOGS_KEY);
+  renderizarLogs();
+  toast('Logs limpos','ok');
+}
+
+function exportarLogs() {
+  const logs = carregarLogs();
+  const txt = logs.map(l => {
+    const linhas = (l.resultados||[]).map(r =>
+      `  ${r.ok?'✓':'✗'} ${r.conta||''} | ${r.variacao||''} → ${r.ok?(r.mlb_criado||'OK'):r.erro||'erro'}`
+    ).join('
+');
+    return `[${l.ts}] ${l.tipo.toUpperCase()} — ${l.resumo||''}
+${linhas}`;
+  }).join('
+─────────────────────────────
+');
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
+  a.download = `meli-logs-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+function renderizarLogs() {
+  const cont = document.getElementById('logs-container');
+  if(!cont) return;
+  const logs = carregarLogs();
+  if(!logs.length) {
+    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum log ainda. Os logs aparecem aqui após criar ou simular variações.</div>';
+    return;
+  }
+  cont.innerHTML = logs.map(l => {
+    const ts = new Date(l.ts).toLocaleString('pt-BR');
+    const ok = (l.resultados||[]).filter(r=>r.ok).length;
+    const err = (l.resultados||[]).filter(r=>!r.ok).length;
+    const tipoColor = l.tipo==='criar'?'var(--ve)':l.tipo==='simular'?'var(--az)':'var(--vm)';
+    const badge = `<span class="badge" style="background:${tipoColor}20;color:${tipoColor}">${l.tipo.toUpperCase()}</span>`;
+    const linhas = (l.resultados||[]).map(r => {
+      if(r.dry_run) return `<div style="padding:4px 0;font-size:12px;color:var(--c5)">• [SIM] <b>${r.conta}</b> | ${r.variacao} → ${r.payload_resumo||'ok'}</div>`;
+      if(r.ok) return `<div style="padding:4px 0;font-size:12px;color:var(--ve)">• ✓ <b>${r.conta}</b> | ${r.variacao} → <a href="https://www.mercadolivre.com.br/anuncios/${r.mlb_criado}" target="_blank" style="color:var(--az)">${r.mlb_criado}</a></div>`;
+      return `<div style="padding:4px 0;font-size:12px;color:var(--vm)">• ✗ <b>${r.conta}</b> | ${r.variacao} → ${r.erro||'erro desconhecido'}${r.cause&&r.cause.length?'<br><span style="font-size:11px;color:var(--c4)">Causa: '+JSON.stringify(r.cause)+'</span>':''}</div>`;
+    }).join('');
+    return `<div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        ${badge}
+        <span style="font-size:12px;color:var(--c4)">${ts}</span>
+        <span style="font-size:12px;color:var(--c5);flex:1">${l.resumo||''}</span>
+        <span class="badge ${ok>0?'bok':'berr'}">${ok} OK${err>0?' / '+err+' erro(s)':''}</span>
+      </div>
+      ${linhas||'<span style="font-size:12px;color:var(--c4)">Sem detalhes</span>'}
+    </div>`;
+  }).join('');
+}
+
+// ── Dashboard: atualizar stats ──
+async function atualizarDashboard() {
+  const btn = document.getElementById('btn-refresh-dash');
+  if(btn) { btn.textContent='↻ Atualizando...'; btn.disabled=true; }
+  try {
+    await verificarEAtualizarTokens();
+    // Re-render dashboard stats from logs
+    const logs = carregarLogs().filter(l=>l.tipo==='criar');
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    const todayLogs = logs.filter(l=>new Date(l.ts).toLocaleDateString('pt-BR')===hoje);
+    const okHoje = todayLogs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
+    const errTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>!r.ok).length;
+    const okTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
+    // Update stat cards if they exist
+    const cards = document.querySelectorAll('#sec-dashboard .sv');
+    if(cards.length >= 4) {
+      cards[0].textContent = okHoje;
+      cards[2].textContent = okTotal;
+      cards[3].textContent = errTotal;
+    }
+    toast('Dashboard atualizado','ok');
+  } catch(e){ toast('Erro ao atualizar','err'); }
+  if(btn) { btn.textContent='↻ Atualizar'; btn.disabled=false; }
+}
+
+// Expose renderizarLogs to nav
+const _navOrig = window.nav;
+window.nav = function(id, el) {
+  _navOrig(id, el);
+  if(id==='logs') renderizarLogs();
+  if(id==='dashboard') atualizarDashboard();
+};
+
 // ═══════════════════════════════════════════════════════════
 // AUTO-SAVE — salva dados da tabela no localStorage a cada 30s
 // ═══════════════════════════════════════════════════════════
@@ -1260,6 +1390,14 @@ function exibirResultado(resultados, isDryRun) {
       <h4>${isDryRun?'Simulação':'Execução'} concluída — ${ok.length} OK, ${err.length} erro(s)</h4>
       <p>${linhas}</p>
     </div>`;
+
+  // Registrar no log
+  const contasUsadas = [...new Set(resultados.map(r=>r.conta))].join(', ');
+  const variacoes = [...new Set(resultados.map(r=>r.variacao))].join(', ');
+  adicionarLog(isDryRun?'simular':'criar', {
+    resumo: `${resultados.length} variação(ões) em ${contasUsadas} — ${variacoes}`,
+    resultados: resultados.map(r => ({...r}))
+  });
 }
 
 // Substituir getLinhas para incluir familia_id
@@ -1293,6 +1431,120 @@ window.getLinhas = function() {
 function contasSel(){return[contas.c1&&'conta1',contas.c2&&'conta2'].filter(Boolean);}
 
 document.getElementById('is')?.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+
+
+// ═══════════════════════════════════════════════════════════
+// LOGS — registro persistente de cada chamada à API MELI
+// ═══════════════════════════════════════════════════════════
+const LOGS_KEY = 'meli_panel_logs';
+const MAX_LOGS = 200;
+
+function adicionarLog(tipo, dados) {
+  try {
+    const logs = carregarLogs();
+    logs.unshift({
+      id: Date.now(),
+      ts: new Date().toISOString(),
+      tipo, // 'criar'|'simular'|'token'|'erro'
+      ...dados
+    });
+    if(logs.length > MAX_LOGS) logs.splice(MAX_LOGS);
+    localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+    if(document.getElementById('sec-logs')?.classList.contains('ativa')) renderizarLogs();
+  } catch(e){}
+}
+
+function carregarLogs() {
+  try { return JSON.parse(localStorage.getItem(LOGS_KEY)||'[]'); } catch(e){ return []; }
+}
+
+function limparLogs() {
+  localStorage.removeItem(LOGS_KEY);
+  renderizarLogs();
+  toast('Logs limpos','ok');
+}
+
+function exportarLogs() {
+  const logs = carregarLogs();
+  const txt = logs.map(l => {
+    const linhas = (l.resultados||[]).map(r =>
+      `  ${r.ok?'✓':'✗'} ${r.conta||''} | ${r.variacao||''} → ${r.ok?(r.mlb_criado||'OK'):r.erro||'erro'}`
+    ).join('
+');
+    return `[${l.ts}] ${l.tipo.toUpperCase()} — ${l.resumo||''}
+${linhas}`;
+  }).join('
+─────────────────────────────
+');
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
+  a.download = `meli-logs-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+function renderizarLogs() {
+  const cont = document.getElementById('logs-container');
+  if(!cont) return;
+  const logs = carregarLogs();
+  if(!logs.length) {
+    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum log ainda. Os logs aparecem aqui após criar ou simular variações.</div>';
+    return;
+  }
+  cont.innerHTML = logs.map(l => {
+    const ts = new Date(l.ts).toLocaleString('pt-BR');
+    const ok = (l.resultados||[]).filter(r=>r.ok).length;
+    const err = (l.resultados||[]).filter(r=>!r.ok).length;
+    const tipoColor = l.tipo==='criar'?'var(--ve)':l.tipo==='simular'?'var(--az)':'var(--vm)';
+    const badge = `<span class="badge" style="background:${tipoColor}20;color:${tipoColor}">${l.tipo.toUpperCase()}</span>`;
+    const linhas = (l.resultados||[]).map(r => {
+      if(r.dry_run) return `<div style="padding:4px 0;font-size:12px;color:var(--c5)">• [SIM] <b>${r.conta}</b> | ${r.variacao} → ${r.payload_resumo||'ok'}</div>`;
+      if(r.ok) return `<div style="padding:4px 0;font-size:12px;color:var(--ve)">• ✓ <b>${r.conta}</b> | ${r.variacao} → <a href="https://www.mercadolivre.com.br/anuncios/${r.mlb_criado}" target="_blank" style="color:var(--az)">${r.mlb_criado}</a></div>`;
+      return `<div style="padding:4px 0;font-size:12px;color:var(--vm)">• ✗ <b>${r.conta}</b> | ${r.variacao} → ${r.erro||'erro desconhecido'}${r.cause&&r.cause.length?'<br><span style="font-size:11px;color:var(--c4)">Causa: '+JSON.stringify(r.cause)+'</span>':''}</div>`;
+    }).join('');
+    return `<div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        ${badge}
+        <span style="font-size:12px;color:var(--c4)">${ts}</span>
+        <span style="font-size:12px;color:var(--c5);flex:1">${l.resumo||''}</span>
+        <span class="badge ${ok>0?'bok':'berr'}">${ok} OK${err>0?' / '+err+' erro(s)':''}</span>
+      </div>
+      ${linhas||'<span style="font-size:12px;color:var(--c4)">Sem detalhes</span>'}
+    </div>`;
+  }).join('');
+}
+
+// ── Dashboard: atualizar stats ──
+async function atualizarDashboard() {
+  const btn = document.getElementById('btn-refresh-dash');
+  if(btn) { btn.textContent='↻ Atualizando...'; btn.disabled=true; }
+  try {
+    await verificarEAtualizarTokens();
+    // Re-render dashboard stats from logs
+    const logs = carregarLogs().filter(l=>l.tipo==='criar');
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    const todayLogs = logs.filter(l=>new Date(l.ts).toLocaleDateString('pt-BR')===hoje);
+    const okHoje = todayLogs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
+    const errTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>!r.ok).length;
+    const okTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
+    // Update stat cards if they exist
+    const cards = document.querySelectorAll('#sec-dashboard .sv');
+    if(cards.length >= 4) {
+      cards[0].textContent = okHoje;
+      cards[2].textContent = okTotal;
+      cards[3].textContent = errTotal;
+    }
+    toast('Dashboard atualizado','ok');
+  } catch(e){ toast('Erro ao atualizar','err'); }
+  if(btn) { btn.textContent='↻ Atualizar'; btn.disabled=false; }
+}
+
+// Expose renderizarLogs to nav
+const _navOrig = window.nav;
+window.nav = function(id, el) {
+  _navOrig(id, el);
+  if(id==='logs') renderizarLogs();
+  if(id==='dashboard') atualizarDashboard();
+};
 
 // ═══════════════════════════════════════════════════════════
 // AUTO-SAVE — salva dados da tabela no localStorage a cada 30s
