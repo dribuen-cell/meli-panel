@@ -380,7 +380,7 @@ const FOTO_PADRAO_EMBED = {
                   <th style="min-width:130px">Variação<span class="req">*</span></th>
                   <th style="width:85px">Preço<span class="req">*</span></th>
                   <th style="width:65px">Estoque</th>
-                  <th style="width:165px">EAN</th>
+                  <th style="min-width:165px;width:165px">EAN</th>
                   <th style="min-width:160px" class="sku-cell">SKU</th>
                   <th style="width:68px">Peso (g)</th>
                   <th style="width:64px">Alt (cm)</th>
@@ -797,6 +797,62 @@ function setupPaste(id){
       }
     });
   });
+
+  // Navegação com setas entre células (←→↑↓)
+  const navCols = ['fam','var','preco','est','ean','sku','peso','alt','lar','comp'];
+  navCols.forEach((col, ci) => {
+    const inp = document.getElementById(col+id);
+    if(!inp) return;
+    inp.addEventListener('keydown', e => {
+      const rows = Array.from(document.querySelectorAll('#tbody tr'));
+      const ri = rows.findIndex(r => r.id === 'ln'+id);
+      if(e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)) {
+        // próxima coluna ou próxima linha
+        if(ci < navCols.length-1) {
+          e.preventDefault();
+          document.getElementById(navCols[ci+1]+id)?.focus();
+        } else if(ri < rows.length-1) {
+          e.preventDefault();
+          const nextId = rows[ri+1].id.replace('ln','');
+          document.getElementById(navCols[0]+nextId)?.focus();
+        }
+      } else if(e.key === 'ArrowLeft' || (e.key === 'Tab' && e.shiftKey)) {
+        if(ci > 0) {
+          e.preventDefault();
+          document.getElementById(navCols[ci-1]+id)?.focus();
+        } else if(ri > 0) {
+          e.preventDefault();
+          const prevId = rows[ri-1].id.replace('ln','');
+          document.getElementById(navCols[navCols.length-1]+prevId)?.focus();
+        }
+      } else if(e.key === 'ArrowDown') {
+        if(ri < rows.length-1) {
+          e.preventDefault();
+          const nextId = rows[ri+1].id.replace('ln','');
+          document.getElementById(col+nextId)?.focus();
+        }
+      } else if(e.key === 'ArrowUp') {
+        if(ri > 0) {
+          e.preventDefault();
+          const prevId = rows[ri-1].id.replace('ln','');
+          document.getElementById(col+prevId)?.focus();
+        }
+      } else if(e.key === 'Enter') {
+        e.preventDefault();
+        if(ri < rows.length-1) {
+          const nextId = rows[ri+1].id.replace('ln','');
+          document.getElementById(col+nextId)?.focus();
+        } else {
+          addLinha();
+          setTimeout(()=>{
+            const newRows = Array.from(document.querySelectorAll('#tbody tr'));
+            const newId = newRows[newRows.length-1].id.replace('ln','');
+            document.getElementById(navCols[0]+newId)?.focus();
+          },50);
+        }
+      }
+    });
+  });
 }
 
 // ADD / REMOVE LINHA
@@ -816,7 +872,7 @@ function addLinha(){
       oninput="atualizarTabelaFotoRefs()"></td>
     <td><input class="cell-input" type="number" step="0.01" id="preco${id}" placeholder="0,00"></td>
     <td><input class="cell-input" type="number" min="0" id="est${id}" value="0"></td>
-    <td><input class="cell-input" id="ean${id}" placeholder="0000000000000" maxlength="13" style="font-family:'DM Mono',monospace;letter-spacing:1px"></td>
+    <td style="min-width:165px"><input class="cell-input" id="ean${id}" placeholder="0000000000000" maxlength="13" style="font-family:'DM Mono',monospace;letter-spacing:1px"></td>
     <td class="sku-cell"><input class="cell-input" id="sku${id}" placeholder="SKU-001" style="min-width:155px"></td>
     <td><input class="cell-input" type="number" id="peso${id}" placeholder="g"></td>
     <td><input class="cell-input" type="number" id="alt${id}" placeholder="cm"></td>
@@ -1101,6 +1157,26 @@ async function executar() {
   const semFoto = dados.filter(d => !getFotoParaVariacao(d.variacao));
   if (semFoto.length) { toast(semFoto.length + ' variação(ões) sem fotos', 'err'); return; }
 
+  // Verificar se tokens estão configurados antes de tentar
+  try {
+    const tr = await fetch(API + '/api/tokens/status');
+    const td = await tr.json();
+    const tokensFaltando = cs.filter(c => {
+      const info = td[c];
+      return !info || !info.valido;
+    });
+    if(tokensFaltando.length > 0) {
+      document.getElementById('resultado').innerHTML = `
+        <div class="res-warn" style="margin-top:16px">
+          ⚠ Token não configurado para: ${tokensFaltando.join(', ')}<br>
+          <a href="#" onclick="nav('token',document.querySelectorAll('.ni')[4])" 
+             style="color:var(--az);font-weight:600">→ Clique aqui para configurar o Token MELI</a>
+        </div>`;
+      toast('Configure o Token MELI antes de criar', 'err');
+      return;
+    }
+  } catch(e) { /* se o endpoint não existir, continua */ }
+
   showLoading('Fazendo upload das fotos...');
   toast('Fazendo upload das fotos...', 'ok');
 
@@ -1174,7 +1250,10 @@ function exibirResultado(resultados, isDryRun) {
   const linhas = resultados.map(r=>{
     if(r.dry_run) return `• [SIM] ${r.conta} | ${r.variacao} → ${r.payload_resumo}`;
     if(r.ok) return `• ✓ ${r.conta} | ${r.variacao} → <strong>${r.mlb_criado}</strong>`;
-    return `• ✗ ${r.conta} | ${r.variacao} → ${r.erro}`;
+    const erroMsg = r.erro && r.erro.includes('Token') 
+      ? `${r.erro} — <a href="#" onclick="nav('token',document.querySelectorAll('.ni')[4])" style="color:var(--az);text-decoration:underline">Renove o token aqui</a>`
+      : (r.erro || 'Erro desconhecido');
+    return `• ✗ ${r.conta} | ${r.variacao} → ${erroMsg}`;
   }).join('<br>');
   document.getElementById('resultado').innerHTML = `
     <div class="res-ok" style="margin-top:16px">
