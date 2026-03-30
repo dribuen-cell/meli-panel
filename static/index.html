@@ -2,244 +2,227 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>JA Comercial — Painel MELI</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
-  :root {
-    --am:#FFE600;--am2:#FFD000;--az:#1059C5;--ve:#00A650;--vm:#E53935;
-    --bg:#F5F5F5;--br:#FFF;--c1:#FAFAFA;--c2:#F0F0F0;--c3:#E0E0E0;--c4:#9E9E9E;--c5:#616161;--pr:#1A1A1A;
-    --sh:0 2px 8px rgba(0,0,0,.08);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--pr);min-height:100vh}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+:root{
+  --am:#FFE600;--am2:#FFD000;--az:#1059C5;--ve:#00A650;--vm:#E53935;
+  --bg:#F5F5F5;--br:#FFF;--c1:#FAFAFA;--c2:#F0F0F0;--c3:#E0E0E0;
+  --c4:#9E9E9E;--c5:#616161;--pr:#1A1A1A;
+  --sh:0 2px 8px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--pr);min-height:100vh}
 
-  /* LOGIN */
-  #tela-login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1059C5,#0A3D8F)}
-  .lcard{background:var(--br);border-radius:16px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-  .llogo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
-  .logob{width:44px;height:44px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:var(--pr)}
-  .llogo h1{font-size:20px;font-weight:600}.llogo span{font-size:13px;color:var(--c4);display:block}
-  .ltitle{font-size:24px;font-weight:600;margin-bottom:8px}.lsub{font-size:14px;color:var(--c4);margin-bottom:32px}
-  .lf{margin-bottom:16px}.lf label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--c5)}
-  .lf input{width:100%;height:44px;border:1.5px solid var(--c3);border-radius:8px;padding:0 14px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;background:var(--c1)}
-  .lf input:focus{border-color:var(--az);background:white}
-  .btn-login{width:100%;height:48px;background:var(--am);border:none;border-radius:8px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:8px}
-  .btn-login:hover{background:var(--am2)}
-  .lhint{font-size:12px;color:var(--c4);text-align:center;margin-top:20px}
+/* LOGIN */
+#tela-login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1059C5,#0A3D8F)}
+.lcard{background:var(--br);border-radius:16px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.llogo{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.logob{width:44px;height:44px;background:var(--am);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:var(--pr)}
+.llogo h1{font-size:20px;font-weight:600}.llogo span{font-size:13px;color:var(--c4);display:block}
+.ltitle{font-size:24px;font-weight:600;margin-bottom:8px}.lsub{font-size:14px;color:var(--c4);margin-bottom:32px}
+.lf{margin-bottom:16px}.lf label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--c5)}
+.lf input{width:100%;height:44px;border:1.5px solid var(--c3);border-radius:8px;padding:0 14px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s;background:var(--c1)}
+.lf input:focus{border-color:var(--az);background:white}
+.btn-login{width:100%;height:48px;background:var(--am);border:none;border-radius:8px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:8px;transition:background .2s}
+.btn-login:hover{background:var(--am2)}.lhint{font-size:12px;color:var(--c4);text-align:center;margin-top:20px}
 
-  /* LAYOUT */
-  #tela-app{display:none}
-  .layout{display:flex;min-height:100vh}
-  .sidebar{width:240px;background:var(--pr);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
-  .slogo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
-  .slogo .logob{width:36px;height:36px;font-size:15px;border-radius:8px}.slogo span{font-size:15px;font-weight:600;color:white}
-  .snav{flex:1;padding:16px 0}
-  .nsec{font-size:10px;font-weight:600;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:16px 20px 8px;text-transform:uppercase}
-  .ni{display:flex;align-items:center;gap:12px;padding:10px 20px;font-size:14px;color:rgba(255,255,255,.65);cursor:pointer;border-left:3px solid transparent;transition:background .15s,color .15s}
-  .ni:hover{background:rgba(255,255,255,.06);color:white}
-  .ni.ativo{background:rgba(255,230,0,.12);color:var(--am);border-left-color:var(--am)}
-  .nic{font-size:18px;width:20px;text-align:center}
-  .suser{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
-  .av{width:34px;height:34px;border-radius:50%;background:var(--am);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--pr)}
-  .ui{flex:1}.ui strong{display:block;font-size:13px;color:white}.ui span{font-size:11px;color:rgba(255,255,255,.4)}
-  .bsair{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;padding:4px}
-  .bsair:hover{color:white}
-  .main{margin-left:240px;flex:1;padding:32px}
-  .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
-  .ph h2{font-size:22px;font-weight:600}.ph p{font-size:14px;color:var(--c4);margin-top:2px}
-  .bp{height:40px;padding:0 20px;background:var(--am);border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s}
-  .bp:hover{background:var(--am2)}
-  .bs{height:40px;padding:0 16px;background:var(--c2);border:1.5px solid var(--c3);border-radius:8px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s}
-  .bs:hover{background:var(--c3)}
-  .brow{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
-  .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-  .sc{background:var(--br);border-radius:12px;padding:20px;box-shadow:var(--sh)}
-  .sl{font-size:12px;color:var(--c4);margin-bottom:8px}.sv{font-size:28px;font-weight:600}.ss{font-size:12px;color:var(--c4);margin-top:4px}
-  .sv.vd{color:var(--ve)}.sv.az{color:var(--az)}.sv.vm{color:var(--vm)}
-  .card{background:var(--br);border-radius:12px;padding:24px;box-shadow:var(--sh);margin-bottom:16px}
-  .card h3{font-size:16px;font-weight:600;margin-bottom:4px}
-  .card p.desc{font-size:13px;color:var(--c4);margin-bottom:16px}
-  .div{border:none;border-top:1px solid var(--c2);margin:16px 0}
+/* LAYOUT */
+#tela-app{display:none}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--pr);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+.slogo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.slogo .logob{width:36px;height:36px;font-size:15px;border-radius:8px}.slogo span{font-size:15px;font-weight:600;color:white}
+.snav{flex:1;padding:16px 0}
+.nsec{font-size:10px;font-weight:600;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:16px 20px 8px;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:12px;padding:10px 20px;font-size:14px;color:rgba(255,255,255,.65);cursor:pointer;border-left:3px solid transparent;transition:background .15s,color .15s}
+.ni:hover{background:rgba(255,255,255,.06);color:white}
+.ni.ativo{background:rgba(255,230,0,.12);color:var(--am);border-left-color:var(--am)}
+.nic{font-size:16px;width:20px;text-align:center}
+.suser{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--am);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--pr)}
+.ui{flex:1}.ui strong{display:block;font-size:13px;color:white}.ui span{font-size:11px;color:rgba(255,255,255,.4)}
+.bsair{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;padding:4px}
+.bsair:hover{color:white}
+.main{margin-left:240px;flex:1;padding:32px}
 
-  /* CONTAS */
-  .conta-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-  .conta-btn{display:flex;align-items:center;gap:10px;padding:10px 16px;border:2px solid var(--c3);border-radius:10px;cursor:pointer;background:var(--c1);transition:all .15s;flex:1;min-width:180px}
-  .conta-btn:hover{border-color:var(--az);background:white}
-  .conta-btn.sel{border-color:var(--az);background:#EEF4FF}
-  .conta-btn.sel2{border-color:#00A650;background:#E8F5E9}
-  .conta-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
-  .conta-ico.c1{background:var(--az)}.conta-ico.c2{background:#FF6B00}
-  .conta-info strong{display:block;font-size:13px;font-weight:600;color:var(--pr)}
-  .conta-info span{font-size:11px;color:var(--c4)}
-  .conta-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--c3);margin-left:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .15s}
-  .conta-btn.sel .conta-check{border-color:var(--az);background:var(--az);color:white}
-  .conta-btn.sel2 .conta-check{border-color:#00A650;background:#00A650;color:white}
-  .ambas-tag{display:inline-flex;align-items:center;gap:6px;background:#FFF8E1;border:1px solid #FFD54F;border-radius:6px;padding:4px 10px;font-size:12px;color:#F57F17;font-weight:500}
+/* PAGE HEADER */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.ph h2{font-size:22px;font-weight:600}.ph p{font-size:14px;color:var(--c4);margin-top:2px}
+.brow{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
 
-  /* ══ BANCO DE FOTOS ══ */
-  .fotos-banco{margin-bottom:0}
-  .foto-banco-item{
-    display:flex;align-items:flex-start;gap:12px;
-    padding:14px 16px;border:1.5px solid var(--c3);border-radius:10px;
-    margin-bottom:10px;background:var(--c1);transition:border-color .15s;
-  }
-  .foto-banco-item:hover{border-color:var(--c4)}
-  .foto-banco-item.tem-foto{border-color:var(--ve);background:#F1FBF4}
+/* BUTTONS */
+.bp{height:40px;padding:0 20px;background:var(--am);border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s}
+.bp:hover{background:var(--am2)}
+.bs{height:40px;padding:0 16px;background:var(--c2);border:1.5px solid var(--c3);border-radius:8px;font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s}
+.bs:hover{background:var(--c3)}
+.bs:disabled{opacity:.5;cursor:default}
 
-  .fb-variacao{
-    flex:0 0 180px;
-  }
-  .fb-variacao label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c4);display:block;margin-bottom:4px}
-  .fb-variacao input{
-    width:100%;height:36px;border:1.5px solid var(--c3);border-radius:7px;
-    padding:0 10px;font-size:13px;font-family:inherit;outline:none;
-    background:white;transition:border-color .2s;
-  }
-  .fb-variacao input:focus{border-color:var(--az)}
+/* CARDS */
+.card{background:var(--br);border-radius:12px;padding:24px;box-shadow:var(--sh);margin-bottom:16px}
+.card h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.card p.desc{font-size:13px;color:var(--c4);margin-bottom:16px}
+.div{border:none;border-top:1px solid var(--c2);margin:16px 0}
 
-  .fb-fotos{flex:1}
-  .fb-fotos label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c4);display:block;margin-bottom:4px}
+/* STATS GRID */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.sc{background:var(--br);border-radius:12px;padding:20px;box-shadow:var(--sh)}
+.sl{font-size:12px;color:var(--c4);margin-bottom:8px}.sv{font-size:28px;font-weight:600}.ss{font-size:12px;color:var(--c4);margin-top:4px}
+.sv.vd{color:var(--ve)}.sv.az{color:var(--az)}.sv.vm{color:var(--vm)}
 
-  .fb-tabs{display:flex;gap:0;height:30px;border:1px solid var(--c3);border-radius:7px;overflow:hidden;margin-bottom:8px;width:fit-content}
-  .fb-tab{padding:0 14px;font-size:12px;font-family:'DM Sans',sans-serif;border:none;background:none;cursor:pointer;color:var(--c4);display:flex;align-items:center;gap:5px;transition:background .15s,color .15s}
-  .fb-tab.ativo{background:var(--az);color:white;font-weight:500}
-  .fb-tab:not(.ativo):hover{background:var(--c2);color:var(--c5)}
-  .fb-tab+.fb-tab{border-left:1px solid var(--c3)}
+/* CONTAS */
+.conta-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.conta-btn{display:flex;align-items:center;gap:10px;padding:10px 16px;border:2px solid var(--c3);border-radius:10px;cursor:pointer;background:var(--c1);transition:all .15s;flex:1;min-width:180px}
+.conta-btn:hover{border-color:var(--az);background:white}
+.conta-btn.sel{border-color:var(--az);background:#EEF4FF}
+.conta-btn.sel2{border-color:#00A650;background:#E8F5E9}
+.conta-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.conta-ico.c1{background:var(--az)}.conta-ico.c2{background:#FF6B00}
+.conta-info strong{display:block;font-size:13px;font-weight:600;color:var(--pr)}
+.conta-info span{font-size:11px;color:var(--c4)}
+.conta-check{width:18px;height:18px;border-radius:50%;border:2px solid var(--c3);margin-left:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .15s}
+.conta-btn.sel .conta-check{border-color:var(--az);background:var(--az);color:white}
+.conta-btn.sel2 .conta-check{border-color:#00A650;background:#00A650;color:white}
+.ambas-tag{display:inline-flex;align-items:center;gap:6px;background:#FFF8E1;border:1px solid #FFD54F;border-radius:6px;padding:4px 10px;font-size:12px;color:#F57F17;font-weight:500}
 
-  /* OneDrive / pasta path */
-  .fb-path-area{display:none}
-  .fb-path-row{display:flex;gap:8px;align-items:center}
-  .fb-path-input{
-    flex:1;height:36px;border:1.5px solid var(--c3);border-radius:7px;
-    padding:0 10px;font-size:12px;font-family:'DM Mono',monospace;outline:none;
-    background:white;transition:border-color .2s;color:var(--c5);
-  }
-  .fb-path-input:focus{border-color:var(--az);color:var(--pr)}
-  .fb-path-input::placeholder{font-family:'DM Sans',sans-serif;color:var(--c4);font-size:12px}
-  .fb-tipo-label{
-    font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;white-space:nowrap;
-  }
-  .fb-tipo-od{background:#E3F2FD;color:#1565C0}
-  .fb-tipo-pasta{background:var(--c2);color:var(--c5)}
+/* BANCO DE FOTOS */
+.fotos-banco{margin-bottom:0}
+.foto-banco-item{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1.5px solid var(--c3);border-radius:10px;margin-bottom:10px;background:var(--c1);transition:border-color .15s}
+.foto-banco-item:hover{border-color:var(--c4)}
+.foto-banco-item.tem-foto{border-color:var(--ve);background:#F1FBF4}
+.fb-variacao{flex:0 0 180px}
+.fb-variacao label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c4);display:block;margin-bottom:4px}
+.fb-variacao input{width:100%;height:36px;border:1.5px solid var(--c3);border-radius:7px;padding:0 10px;font-size:13px;font-family:inherit;outline:none;background:white;transition:border-color .2s}
+.fb-variacao input:focus{border-color:var(--az)}
+.fb-fotos{flex:1}
+.fb-fotos label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c4);display:block;margin-bottom:4px}
+.fb-tabs{display:flex;height:30px;border:1px solid var(--c3);border-radius:7px;overflow:hidden;margin-bottom:8px;width:fit-content}
+.fb-tab{padding:0 14px;font-size:12px;font-family:'DM Sans',sans-serif;border:none;background:none;cursor:pointer;color:var(--c4);display:flex;align-items:center;gap:5px;transition:background .15s,color .15s}
+.fb-tab.ativo{background:var(--az);color:white;font-weight:500}
+.fb-tab:not(.ativo):hover{background:var(--c2);color:var(--c5)}
+.fb-tab+.fb-tab{border-left:1px solid var(--c3)}
+.fb-path-row{display:flex;gap:8px;align-items:center}
+.fb-path-input{flex:1;height:36px;border:1.5px solid var(--c3);border-radius:7px;padding:0 10px;font-size:12px;font-family:'DM Mono',monospace;outline:none;background:white;transition:border-color .2s;color:var(--c5)}
+.fb-path-input:focus{border-color:var(--az);color:var(--pr)}
+.fb-tipo-label{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.fb-tipo-od{background:#E3F2FD;color:#1565C0}
+.fb-tipo-pasta{background:var(--c2);color:var(--c5)}
+.fb-drop{border:2px dashed var(--c3);border-radius:7px;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;font-size:12px;color:var(--c4);transition:all .15s;position:relative;overflow:hidden}
+.fb-drop:hover{border-color:var(--az);color:var(--az);background:#EEF4FF}
+.fb-drop.ok{border-color:var(--ve);background:#E8F5E9;color:#2E7D32;border-style:solid}
+.fb-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.fb-drop .thumbs{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.fb-thumb{width:32px;height:32px;border-radius:4px;object-fit:cover;border:1px solid var(--c3)}
+.fb-count{font-size:11px;font-weight:600;background:#C8E6C9;color:#2E7D32;border-radius:10px;padding:2px 8px}
+.fb-rm{margin-left:auto;background:none;border:none;color:var(--c4);cursor:pointer;font-size:16px;flex-shrink:0;padding:4px;border-radius:4px}
+.fb-rm:hover{background:#FFEBEE;color:var(--vm)}
+.add-foto-banco{width:100%;height:38px;border:1.5px dashed var(--c3);border-radius:8px;background:var(--c1);font-size:13px;color:var(--c4);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s;margin-top:8px}
+.add-foto-banco:hover{background:white;color:var(--az);border-color:var(--az)}
+.foto-status-ok{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#2E7D32;font-weight:500}
+.foto-status-pend{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--c4)}
 
-  /* Upload area */
-  .fb-upload-area{display:none}
-  .fb-drop{
-    border:2px dashed var(--c3);border-radius:7px;padding:12px 16px;
-    display:flex;align-items:center;gap:10px;cursor:pointer;
-    font-size:12px;color:var(--c4);transition:all .15s;position:relative;overflow:hidden;
-  }
-  .fb-drop:hover{border-color:var(--az);color:var(--az);background:#EEF4FF}
-  .fb-drop.ok{border-color:var(--ve);background:#E8F5E9;color:#2E7D32;border-style:solid}
-  .fb-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-  .fb-drop .thumbs{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
-  .fb-thumb{width:32px;height:32px;border-radius:4px;object-fit:cover;border:1px solid var(--c3)}
-  .fb-count{font-size:11px;font-weight:600;background:#C8E6C9;color:#2E7D32;border-radius:10px;padding:2px 8px}
+/* TABELA EXCEL */
+.excel-wrap{overflow-x:auto;border-radius:8px 8px 0 0;border:1px solid var(--c3)}
+.excel-table{border-collapse:collapse;width:100%;min-width:900px}
+.excel-table th{background:var(--c2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c5);padding:9px 8px;text-align:left;border:1px solid var(--c3);white-space:nowrap}
+.excel-table th .req{color:var(--vm);margin-left:2px}
+.excel-table td{border:1px solid var(--c3);padding:2px;background:white;vertical-align:middle}
+.excel-table tr:hover td{background:#FFFDE7}
+.excel-table td.num{background:var(--c2);text-align:center;font-size:11px;color:var(--c4);width:28px;padding:0;user-select:none}
+.cell-input{width:100%;height:34px;border:none;outline:none;padding:0 8px;font-size:13px;font-family:'DM Sans',sans-serif;background:transparent;color:var(--pr)}
+.cell-input:focus{background:#EEF4FF;box-shadow:inset 0 0 0 2px var(--az)}
+.cell-input::placeholder{color:var(--c4);font-size:12px}
+.cell-input.mono{font-family:'DM Mono',monospace;letter-spacing:1px}
+td.foto-ref-cell{width:90px;max-width:90px;padding:4px 6px;vertical-align:middle}
+.foto-ref-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;border-radius:5px;padding:2px 6px;font-weight:500;white-space:nowrap}
+.foto-ref-badge.ok{background:#E8F5E9;color:#2E7D32}
+.foto-ref-badge.pend{background:var(--c2);color:var(--c4)}
+.foto-ref-badge.padrao{background:#EEF4FF;color:var(--az)}
+td.act-cell{width:64px;text-align:center;background:var(--c1);white-space:nowrap}
+.act-btn{width:26px;height:26px;border-radius:5px;border:none;background:none;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.act-btn.clone{color:var(--az)}.act-btn.clone:hover{background:#EEF4FF}
+.act-btn.rm{color:var(--c4)}.act-btn.rm:hover{background:#FFEBEE;color:var(--vm)}
+.add-linha{width:100%;height:36px;border:1.5px dashed var(--c3);border-top:none;border-radius:0 0 8px 8px;background:var(--c1);font-size:13px;color:var(--c4);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.add-linha:hover{background:white;color:var(--az);border-color:var(--az)}
 
-  .fb-rm{margin-left:auto;background:none;border:none;color:var(--c4);cursor:pointer;font-size:16px;flex-shrink:0;padding:4px;border-radius:4px}
-  .fb-rm:hover{background:#FFEBEE;color:var(--vm)}
+/* AUTOCOMPLETE FAMÍLIA */
+.fam-wrap{position:relative}
+.fam-dropdown{position:absolute;top:100%;left:0;right:0;z-index:50;background:white;border:1.5px solid var(--az);border-top:none;border-radius:0 0 8px 8px;box-shadow:0 4px 16px rgba(0,0,0,.12);max-height:180px;overflow-y:auto;display:none}
+.fam-opt{padding:8px 10px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--c2)}
+.fam-opt:last-child{border-bottom:none}.fam-opt:hover{background:var(--c2)}
+.fam-opt .fo-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--c4)}
 
-  .add-foto-banco{
-    width:100%;height:38px;border:1.5px dashed var(--c3);border-radius:8px;
-    background:var(--c1);font-size:13px;color:var(--c4);cursor:pointer;
-    font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;
-    transition:all .15s;
-  }
-  .add-foto-banco:hover{background:white;color:var(--az);border-color:var(--az)}
+/* RESULTADO */
+.res-ok{background:#E8F5E9;border:1.5px solid #C8E6C9;border-radius:10px;padding:16px 20px;margin-top:16px}
+.res-ok h4{font-size:14px;font-weight:600;color:#2E7D32;margin-bottom:8px}
+.res-ok p{font-size:13px;color:#388E3C;line-height:1.9}
+.res-warn{background:#FFF8E1;border:1.5px solid #FFE082;border-radius:10px;padding:12px 16px;margin-top:10px;font-size:13px;color:#F57F17}
 
-  .foto-status-ok{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#2E7D32;font-weight:500}
-  .foto-status-pend{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--c4)}
+/* HISTÓRICO / REGISTROS */
+.htable{background:var(--br);border-radius:12px;box-shadow:var(--sh);overflow:hidden}
+.htable table{width:100%;border-collapse:collapse}
+.htable th{background:var(--c2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--c4);padding:12px 16px;text-align:left}
+.htable td{padding:13px 16px;font-size:13px;border-bottom:1px solid var(--c2);color:var(--c5)}
+.htable tr:last-child td{border-bottom:none}.htable tr:hover td{background:var(--c1)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.bok{background:#E8F5E9;color:#2E7D32}.berr{background:#FFEBEE;color:#C62828}
+.mlbl{color:var(--az);text-decoration:none;font-family:'DM Mono',monospace;font-size:12px}
+.mlbl:hover{text-decoration:underline}
 
-  /* TABELA */
-  .excel-wrap{overflow-x:auto;border-radius:8px 8px 0 0;border:1px solid var(--c3)}
-  .excel-table{border-collapse:collapse;width:100%;min-width:900px}
-  .excel-table th{background:var(--c2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--c5);padding:9px 8px;text-align:left;border:1px solid var(--c3);white-space:nowrap}
-  .excel-table th .req{color:var(--vm);margin-left:2px}
-  .excel-table td{border:1px solid var(--c3);padding:2px;background:white;vertical-align:middle}
-  .excel-table tr:hover td{background:#FFFDE7}
-  .excel-table td.num{background:var(--c2);text-align:center;font-size:11px;color:var(--c4);width:28px;padding:0;user-select:none}
+/* SECTIONS */
+.sec{display:none}.sec.ativa{display:block}
 
-  /* autocomplete família */
-  .fam-wrap{position:relative}
-  .fam-dropdown{position:absolute;top:100%;left:0;right:0;z-index:50;background:white;border:1.5px solid var(--az);border-top:none;border-radius:0 0 8px 8px;box-shadow:0 4px 16px rgba(0,0,0,.12);max-height:180px;overflow-y:auto;display:none}
-  .fam-opt{padding:8px 10px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--c2)}
-  .fam-opt:last-child{border-bottom:none}.fam-opt:hover{background:var(--c2)}
-  .fam-opt .fo-id{font-family:'DM Mono',monospace;font-size:10px;color:var(--c4)}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--pr);color:white;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:500;display:none;align-items:center;gap:10px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.show{display:flex}.toast.ok{border-left:4px solid var(--ve)}.toast.err{border-left:4px solid var(--vm)}
 
-  .cell-input{width:100%;height:34px;border:none;outline:none;padding:0 8px;font-size:13px;font-family:'DM Sans',sans-serif;background:transparent;color:var(--pr)}
-  .cell-input:focus{background:#EEF4FF;box-shadow:inset 0 0 0 2px var(--az)}
-  .cell-input::placeholder{color:var(--c4);font-size:12px}
+/* HINT */
+.hint-box{background:#EEF4FF;border:1px solid #B5D0F0;border-radius:8px;padding:10px 14px;font-size:12px;color:#1059C5;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.hint-box span{font-size:16px;flex-shrink:0}
 
-  /* célula de foto na tabela — badge automático */
-  td.foto-ref-cell{width:90px;max-width:90px;padding:4px 6px;vertical-align:middle}
-  .foto-ref-badge{
-    display:inline-flex;align-items:center;gap:3px;
-    font-size:10px;border-radius:5px;padding:2px 6px;font-weight:500;white-space:nowrap;
-  }
-  .foto-ref-badge.ok{background:#E8F5E9;color:#2E7D32}
-  .foto-ref-badge.pend{background:var(--c2);color:var(--c4)}
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center}
+.loading-overlay.show{display:flex}
+.loading-box{background:white;border-radius:12px;padding:32px 48px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.loading-spinner{width:40px;height:40px;border:4px solid var(--c3);border-top-color:var(--az);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-box p{font-size:15px;color:var(--c5)}
 
-  td.act-cell{width:64px;text-align:center;background:var(--c1);white-space:nowrap}
-  .act-btn{width:26px;height:26px;border-radius:5px;border:none;background:none;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
-  .act-btn.clone{color:var(--az)}.act-btn.clone:hover{background:#EEF4FF}
-  .act-btn.rm{color:var(--c4)}.act-btn.rm:hover{background:#FFEBEE;color:var(--vm)}
+/* TOKEN */
+.token-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0}
 
-  .add-linha{width:100%;height:36px;border:1.5px dashed var(--c3);border-top:none;border-radius:0 0 8px 8px;background:var(--c1);font-size:13px;color:var(--c4);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
-  .add-linha:hover{background:white;color:var(--az);border-color:var(--az)}
+/* FILTROS REGISTROS */
+.filtro-btn{height:34px;padding:0 14px;border:1.5px solid var(--c3);border-radius:7px;font-size:13px;font-family:inherit;cursor:pointer;background:var(--c1);color:var(--c5);transition:all .15s}
+.filtro-btn.ativo{background:var(--az);color:white;border-color:var(--az)}
 
-  /* RESULTADO */
-  .res-ok{background:#E8F5E9;border:1.5px solid #C8E6C9;border-radius:10px;padding:16px 20px;margin-top:16px}
-  .res-ok h4{font-size:14px;font-weight:600;color:#2E7D32;margin-bottom:8px}
-  .res-ok p{font-size:13px;color:#388E3C;line-height:1.9}
-  .res-warn{background:#FFF8E1;border:1.5px solid #FFE082;border-radius:10px;padding:12px 16px;margin-top:10px;font-size:13px;color:#F57F17}
-
-  /* HISTÓRICO */
-  .htable{background:var(--br);border-radius:12px;box-shadow:var(--sh);overflow:hidden}
-  .htable table{width:100%;border-collapse:collapse}
-  .htable th{background:var(--c2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--c4);padding:12px 16px;text-align:left}
-  .htable td{padding:13px 16px;font-size:13px;border-bottom:1px solid var(--c2);color:var(--c5)}
-  .htable tr:last-child td{border-bottom:none}.htable tr:hover td{background:var(--c1)}
-  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
-  .bok{background:#E8F5E9;color:#2E7D32}.berr{background:#FFEBEE;color:#C62828}
-  .mlbl{color:var(--az);text-decoration:none;font-family:'DM Mono',monospace;font-size:12px}
-  .mlbl:hover{text-decoration:underline}
-
-  .sec{display:none}.sec.ativa{display:block}
-  .toast{position:fixed;bottom:24px;right:24px;background:var(--pr);color:white;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:500;display:none;align-items:center;gap:10px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.2)}
-  .toast.show{display:flex}.toast.ok{border-left:4px solid var(--ve)}.toast.err{border-left:4px solid var(--vm)}
-
-  /* hint box */
-  .hint-box{background:#EEF4FF;border:1px solid #B5D0F0;border-radius:8px;padding:10px 14px;font-size:12px;color:#1059C5;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
-  .hint-box span{font-size:16px;flex-shrink:0}
-
-  /* Remove setas spinner de inputs number (dimensões, peso) */
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-  input[type=number]{-moz-appearance:textfield}
-
-  /* Loading overlay */
-  .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.78);display:none;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px}
-  .loading-overlay.show{display:flex}
-  .spinner{width:44px;height:44px;border:4px solid var(--c3);border-top-color:var(--az);border-radius:50%;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-msg{font-size:15px;font-weight:600;color:var(--az)}
+/* STATUS BADGES */
+.st-processando{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:#FFF8E1;color:#F57F17}
+.st-concluido{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:#E8F5E9;color:var(--ve)}
+.st-parcial{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:#FBE9E7;color:#E65100}
+.st-erro{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:#FFEBEE;color:var(--vm)}
+.st-simulado{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:#EEF4FF;color:var(--az)}
+.st-cancelado{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:var(--c2);color:var(--c4)}
 </style>
-<script>
-// Foto padrão: usa ícone inline simples (sem b64 embarcado)
-const FOTO_PADRAO_EMBED = null;
-</script>
 </head>
 <body>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-box">
+    <div class="loading-spinner"></div>
+    <p id="loading-msg">Aguarde...</p>
+  </div>
+</div>
 
 <!-- LOGIN -->
 <div id="tela-login">
   <div class="lcard">
     <div class="llogo"><div class="logob">JA</div><div><h1>JA Comercial</h1><span>Painel de Gestão MELI</span></div></div>
     <p class="ltitle">Bem-vindo de volta</p><p class="lsub">Entre com suas credenciais</p>
-    <div class="lf"><label>Usuário</label><input id="iu" value="adriana"></div>
+    <div class="lf"><label>Usuário</label><input id="iu" value="adriana" autocomplete="off"></div>
     <div class="lf"><label>Senha</label><input type="password" id="is" value="123456"></div>
-    <button class="btn-login" onclick="login()">Entrar</button>
+    <button class="btn-login" id="btn-login">Entrar</button>
     <p class="lhint">Acesso restrito a funcionários autorizados</p>
   </div>
 </div>
@@ -251,19 +234,18 @@ const FOTO_PADRAO_EMBED = null;
       <div class="slogo"><div class="logob">JA</div><span>MELI Panel</span></div>
       <div class="snav">
         <div class="nsec">Principal</div>
-        <div class="ni ativo" onclick="nav('dashboard',this)"><span class="nic">◉</span>Dashboard</div>
-        <div class="ni" onclick="nav('variacoes',this)"><span class="nic">✦</span>Criar Variação</div>
+        <div class="ni ativo" id="nav-dashboard" onclick="nav('dashboard',this)"><span class="nic">⊙</span>Dashboard</div>
+        <div class="ni" id="nav-variacoes" onclick="nav('variacoes',this)"><span class="nic">◆</span>Criar Variação</div>
         <div class="nsec">Histórico</div>
-        <div class="ni" onclick="nav('historico',this)"><span class="nic">◈</span>Meus Registros</div>
-        <div class="ni" onclick="nav('historico',this)"><span class="nic">◷</span>Todos os Registros</div>
+        <div class="ni" id="nav-historico" onclick="nav('historico',this)"><span class="nic">◈</span>Meus Registros</div>
+        <div class="ni" id="nav-logs" onclick="nav('logs',this)"><span class="nic">📋</span>Logs</div>
         <div class="nsec">Configurações</div>
-        <div class="ni" onclick="nav('token',this)"><span class="nic">⬡</span>Token MELI</div>
-        <div class="ni" onclick="nav('logs',this)"><span class="nic">📋</span>Logs</div>
+        <div class="ni" id="nav-token" onclick="nav('token',this)"><span class="nic">⬡</span>Token MELI</div>
       </div>
       <div class="suser">
         <div class="av" id="uav">AD</div>
         <div class="ui"><strong id="unm">Adriana</strong><span id="ucg">Administrador</span></div>
-        <button class="bsair" onclick="sair()">↗</button>
+        <button class="bsair" onclick="sair()" title="Sair">↗</button>
       </div>
     </nav>
 
@@ -274,33 +256,24 @@ const FOTO_PADRAO_EMBED = null;
         <div class="ph">
           <div><h2>Dashboard</h2><p>Visão geral das variações criadas</p></div>
           <div style="display:flex;gap:8px">
-            <button class="bs" onclick="atualizarDashboard()" id="btn-refresh-dash">↻ Atualizar</button>
-            <button class="bp" onclick="nav('variacoes',document.querySelectorAll('.ni')[1])">✦ Nova Variação</button>
+            <button class="bs" id="btn-refresh-dash" onclick="atualizarDashboard()">↻ Atualizar</button>
+            <button class="bp" onclick="nav('variacoes',document.getElementById('nav-variacoes'))">◆ Nova Variação</button>
           </div>
         </div>
-        <div class="sgrid">
-          <div class="sc"><div class="sl">Criadas hoje</div><div class="sv az">3</div><div class="ss">Vermelho VEC — Kit 4, 6 e 8</div></div>
-          <div class="sc"><div class="sl">Este mês</div><div class="sv">3</div><div class="ss">Março 2026</div></div>
-          <div class="sc"><div class="sl">Com sucesso</div><div class="sv vd">3</div><div class="ss">100%</div></div>
-          <div class="sc"><div class="sl">Com erro</div><div class="sv vm">0</div><div class="ss">Sem erros hoje</div></div>
+        <div class="sgrid" id="dash-stats">
+          <div class="sc"><div class="sl">Criadas hoje</div><div class="sv az" id="dash-hoje">0</div><div class="ss" id="dash-hoje-desc">—</div></div>
+          <div class="sc"><div class="sl">Este mês</div><div class="sv" id="dash-mes">0</div><div class="ss" id="dash-mes-desc">—</div></div>
+          <div class="sc"><div class="sl">Com sucesso</div><div class="sv vd" id="dash-ok">0</div><div class="ss" id="dash-ok-pct">—</div></div>
+          <div class="sc"><div class="sl">Com erro</div><div class="sv vm" id="dash-err">0</div><div class="ss" id="dash-err-desc">Sem erros</div></div>
         </div>
-        <div class="htable">
-          <table>
-            <thead><tr><th>Família</th><th>Variação</th><th>MLB</th><th>Preço</th><th>Conta</th><th>Fotos</th><th>Status</th><th>Quem</th></tr></thead>
-            <tbody>
-              <tr><td>Kit 6 Jogo Americano</td><td>Vermelho VEC</td><td><a class="mlbl">MLB6527661104</a></td><td>R$ 69,99</td><td>Conta 1</td><td>9 fotos</td><td><span class="badge bok">✓ Criado</span></td><td>Adriana</td></tr>
-              <tr><td>Kit 8 Jogo Americano</td><td>Vermelho VEC</td><td><a class="mlbl">MLB4565053097</a></td><td>R$ 78,86</td><td>Conta 1</td><td>9 fotos</td><td><span class="badge bok">✓ Criado</span></td><td>Adriana</td></tr>
-              <tr><td>Kit 4 Jogo Americano</td><td>Vermelho VEC</td><td><a class="mlbl">MLB6527661338</a></td><td>R$ 44,51</td><td>Conta 1</td><td>9 fotos</td><td><span class="badge bok">✓ Criado</span></td><td>Adriana</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div id="dash-recent"></div>
       </section>
 
       <!-- CRIAR VARIAÇÃO -->
       <section id="sec-variacoes" class="sec">
         <div class="ph"><div><h2>Criar Variação</h2><p>Defina as fotos uma vez e preencha a tabela</p></div></div>
 
-        <!-- Contas -->
+        <!-- CONTAS -->
         <div class="card">
           <h3>Conta do Mercado Livre</h3>
           <p class="desc">Selecione em qual conta criar. Marque as duas para criar em ambas.</p>
@@ -322,40 +295,30 @@ const FOTO_PADRAO_EMBED = null;
         <!-- BANCO DE FOTOS -->
         <div class="card">
           <h3>Fotos por variação</h3>
-          <p class="desc">Defina as fotos <strong>uma única vez</strong> para cada nome de variação. Todas as linhas da tabela com esse nome usarão as mesmas fotos automaticamente — sem precisar repetir.</p>
-
-          <div class="hint-box">
-            <span>💡</span>
-            <div>
-              Tem as fotos no <strong>OneDrive</strong>? Basta colar o link da pasta compartilhada.
-              Ou faça o <strong>upload direto</strong> do seu computador — as fotos são enviadas uma única vez.
-            </div>
-          </div>
+          <p class="desc">Defina as fotos <strong>uma única vez</strong> para cada nome de variação. Todas as linhas com esse nome usarão as mesmas fotos automaticamente.</p>
+          <div class="hint-box"><span>💡</span><div>Tem as fotos no <strong>OneDrive</strong>? Cole o link da pasta compartilhada. Ou faça o <strong>upload direto</strong> do seu computador.</div></div>
 
           <!-- FOTO PADRÃO -->
-          <div id="foto-padrao-item" class="foto-banco-item" style="border-color:var(--az);background:#EEF4FF;margin-bottom:16px">
+          <div class="foto-banco-item" style="border-color:var(--az);background:#EEF4FF;margin-bottom:16px" id="foto-padrao-box">
             <div class="fb-variacao" style="flex:0 0 150px">
-              <label style="color:var(--az);font-size:10px">📷 FOTO PADRÃO</label>
-              <span style="font-size:11px;color:var(--c5);line-height:1.5;display:block;margin-top:2px">Usada quando não há foto específica para a variação</span>
+              <label style="color:var(--az)">📷 FOTO PADRÃO</label>
+              <span style="font-size:11px;color:var(--c5);line-height:1.5;display:block;margin-top:2px">Fallback quando não há foto específica</span>
               <div id="fp-status" style="margin-top:6px"><span class="foto-status-pend">⚠ não definida</span></div>
             </div>
             <div class="fb-fotos" style="flex:1">
-              <label>Fotos</label>
+              <label>Fotos padrão</label>
               <div class="fb-tabs">
                 <button class="fb-tab ativo" id="fpt-od" onclick="setFpModo('onedrive')">☁ OneDrive</button>
                 <button class="fb-tab" id="fpt-up" onclick="setFpModo('upload')">⬆ Upload</button>
               </div>
-              <div id="fp-path-area" style="display:block">
+              <div id="fp-path-area">
                 <div class="fb-path-row">
                   <span class="fb-tipo-label fb-tipo-od">OneDrive</span>
-                  <input class="fb-path-input" id="fp-inp" placeholder="Cole o link do OneDrive com a foto padrão..." oninput="onFotoPadraoPath(this.value)">
+                  <input class="fb-path-input" id="fp-inp" placeholder="Cole o link do OneDrive..." oninput="onFpPath(this.value)">
                 </div>
               </div>
               <div id="fp-upload-area" style="display:none">
-                <div class="fb-drop" id="fp-drop">
-                  📷 Clique aqui ou arraste a foto padrão
-                  <input type="file" multiple accept="image/*" onchange="onFotoPadraoFiles(this)">
-                </div>
+                <div class="fb-drop" id="fp-drop">📷 Clique ou arraste a foto padrão<input type="file" multiple accept="image/*" onchange="onFpFiles(this)"></div>
               </div>
             </div>
           </div>
@@ -367,26 +330,24 @@ const FOTO_PADRAO_EMBED = null;
         <!-- TABELA -->
         <div class="card">
           <h3>Planilha de variações</h3>
-          <p class="desc">A coluna "Fotos" mostra automaticamente se as fotos já estão configuradas acima. Use ⤵ para copiar a linha de cima.</p>
+          <p class="desc">Use ←→↑↓ para navegar. Enter avança linha. Cole uma coluna inteira do Excel. ⤵ copia a linha acima.</p>
           <div class="excel-wrap">
             <table class="excel-table">
-              <thead>
-                <tr>
-                  <th style="width:28px">#</th>
-                  <th style="min-width:200px">Família<span class="req">*</span></th>
-                  <th style="min-width:130px">Variação<span class="req">*</span></th>
-                  <th style="width:85px">Preço<span class="req">*</span></th>
-                  <th style="width:65px">Estoque</th>
-                  <th style="min-width:165px;width:165px">EAN</th>
-                  <th style="min-width:160px" class="sku-cell">SKU</th>
-                  <th style="width:68px">Peso (g)</th>
-                  <th style="width:64px">Alt (cm)</th>
-                  <th style="width:64px">Larg (cm)</th>
-                  <th style="width:68px">Comp (cm)</th>
-                  <th style="width:90px">Fotos</th>
-                  <th style="width:64px"></th>
-                </tr>
-              </thead>
+              <thead><tr>
+                <th style="width:28px">#</th>
+                <th style="min-width:200px">Família<span class="req">*</span></th>
+                <th style="min-width:130px">Variação<span class="req">*</span></th>
+                <th style="width:85px">Preço<span class="req">*</span></th>
+                <th style="width:65px">Estoque</th>
+                <th style="min-width:165px;width:165px">EAN</th>
+                <th style="width:110px">SKU</th>
+                <th style="width:68px">Peso (g)</th>
+                <th style="width:64px">Alt (cm)</th>
+                <th style="width:64px">Larg (cm)</th>
+                <th style="width:68px">Comp (cm)</th>
+                <th style="width:90px">Fotos</th>
+                <th style="width:64px"></th>
+              </tr></thead>
               <tbody id="tbody"></tbody>
             </table>
           </div>
@@ -395,118 +356,63 @@ const FOTO_PADRAO_EMBED = null;
 
         <div class="brow">
           <button class="bs" onclick="limpar()">✕ Limpar tudo</button>
-          <button class="bs" onclick="simular()">◎ Simular</button>
-          <button class="bp" onclick="executar()">✦ Criar variações</button>
+          <button class="bs" onclick="simular()">⚡ Simular</button>
+          <button class="bp" onclick="executar()">◆ Criar variações</button>
         </div>
         <div id="resultado"></div>
       </section>
 
-      <!-- HISTÓRICO -->
+      <!-- MEUS REGISTROS -->
       <section id="sec-historico" class="sec">
         <div class="ph">
-          <div><h2>Meus Registros</h2><p>Histórico de simulações e criações</p></div>
-          <div style="display:flex;gap:8px">
-            <button class="bs" onclick="filtrarRegistros('todos')" id="filtro-todos" style="background:var(--az);color:white;border-color:var(--az)">Todos</button>
-            <button class="bs" onclick="filtrarRegistros('simular')" id="filtro-sim">Simulações</button>
-            <button class="bs" onclick="filtrarRegistros('criar')" id="filtro-criar">Criações</button>
-            <button class="bs" onclick="renderizarRegistros()" style="margin-left:4px">↻</button>
+          <div><h2>Meus Registros</h2><p>Tudo que foi simulado ou criado — mesmo com erro</p></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="filtro-btn ativo" id="fil-todos" onclick="setFiltro('todos')">Todos</button>
+            <button class="filtro-btn" id="fil-criar" onclick="setFiltro('criar')">Criações</button>
+            <button class="filtro-btn" id="fil-simular" onclick="setFiltro('simular')">Simulações</button>
+            <button class="bs" onclick="renderRegistros()" style="height:34px;padding:0 12px;margin-left:4px">↻</button>
           </div>
         </div>
         <div id="registros-container"></div>
       </section>
 
-      <!-- TOKEN -->
-      <section id="sec-token" class="sec">
-        <div class="ph"><div><h2>Token MELI</h2><p>Gerencie a autenticação das contas</p></div>
-          <button class="bs" onclick="carregarStatusTokens(true)">↻ Atualizar status</button>
-        </div>
-
-        <div class="hint-box" style="margin-bottom:20px">
-          <span>ℹ️</span>
-          <div>
-            <strong>Como renovar o token:</strong><br>
-            1. Clique em <strong>↗ Abrir autorização MELI</strong><br>
-            2. Autorize no site do Mercado Livre<br>
-            3. Copie o código <code>TG-xxxx</code> da URL de retorno<br>
-            4. Cole no campo abaixo e clique em <strong>Renovar token</strong>
-          </div>
-        </div>
-
-        <!-- Conta 1 -->
-        <div class="card" id="card-token-conta1">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <h3>Conta 1 — JA Comercial</h3>
-            <span id="badge-conta1" class="badge" style="font-size:12px">Verificando...</span>
-          </div>
-          <p class="desc">ja.comercial@gmail.com</p>
-          <div class="sgrid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-            <div class="sc">
-              <div class="sl">Status</div>
-              <div class="sv" id="status-conta1" style="font-size:18px">—</div>
-              <div class="ss" id="expira-conta1"></div>
-            </div>
-            <div class="sc">
-              <div class="sl">Restante</div>
-              <div class="sv" id="restante-conta1" style="font-size:18px">—</div>
-            </div>
-          </div>
-          <div class="div"></div>
-          <div class="brow">
-            <button class="bs" onclick="abrirAutorizacaoMeli('conta1')">↗ Abrir autorização MELI</button>
-          </div>
-          <div style="margin-top:12px">
-            <label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO DA URL (TG-xxxxx...)</label>
-            <input type="text" id="cod-conta1" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx"
-              style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:'DM Mono',monospace;outline:none;background:var(--c1)">
-          </div>
-          <div class="brow" style="margin-top:12px">
-            <button class="bp" onclick="renovarToken('conta1')">✓ Renovar token Conta 1</button>
-          </div>
-        </div>
-
-        <!-- Conta 2 -->
-        <div class="card" id="card-token-conta2">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-            <h3>Conta 2 — Universal Vendas</h3>
-            <span id="badge-conta2" class="badge" style="font-size:12px">Verificando...</span>
-          </div>
-          <p class="desc">universalvendas@gmail.com</p>
-          <div class="sgrid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-            <div class="sc">
-              <div class="sl">Status</div>
-              <div class="sv" id="status-conta2" style="font-size:18px">—</div>
-              <div class="ss" id="expira-conta2"></div>
-            </div>
-            <div class="sc">
-              <div class="sl">Restante</div>
-              <div class="sv" id="restante-conta2" style="font-size:18px">—</div>
-            </div>
-          </div>
-          <div class="div"></div>
-          <div class="brow">
-            <button class="bs" onclick="abrirAutorizacaoMeli('conta2')">↗ Abrir autorização MELI</button>
-          </div>
-          <div style="margin-top:12px">
-            <label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO DA URL (TG-xxxxx...)</label>
-            <input type="text" id="cod-conta2" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx"
-              style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:'DM Mono',monospace;outline:none;background:var(--c1)">
-          </div>
-          <div class="brow" style="margin-top:12px">
-            <button class="bp" onclick="renovarToken('conta2')">✓ Renovar token Conta 2</button>
-          </div>
-        </div>
-      </section>
-
-    <!-- LOGS -->
+      <!-- LOGS -->
       <section id="sec-logs" class="sec">
         <div class="ph">
-          <div><h2>Logs de Execução</h2><p>Histórico detalhado de todas as chamadas à API MELI</p></div>
+          <div><h2>Logs</h2><p>Histórico detalhado de todas as chamadas à API MELI</p></div>
           <div style="display:flex;gap:8px">
             <button class="bs" onclick="exportarLogs()">↓ Exportar</button>
-            <button class="bs" onclick="limparLogs()" style="color:var(--vm)">✕ Limpar</button>
+            <button class="bs" onclick="if(confirm('Limpar todos os logs?')){localStorage.removeItem(LOGS_KEY);renderLogs();toast('Logs limpos','ok')}" style="color:var(--vm)">✕ Limpar</button>
           </div>
         </div>
         <div id="logs-container"></div>
+      </section>
+
+      <!-- TOKEN MELI -->
+      <section id="sec-token" class="sec">
+        <div class="ph"><div><h2>Token MELI</h2><p>Gerencie a autenticação das contas</p></div></div>
+        <div class="card">
+          <h3>Conta 1 — JA Comercial</h3><p class="desc">ja.comercial@gmail.com</p>
+          <div id="t1-status" style="margin-bottom:16px"><span style="color:var(--c4);font-size:13px">Verificando...</span></div>
+          <div class="div"></div>
+          <div class="brow"><button class="bs" onclick="abrirAuth(1)">↗ Autorizar no MELI</button></div>
+          <div style="margin-top:12px">
+            <label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO</label>
+            <input type="text" id="cod-conta1" placeholder="TG-xxxxxxxxxxxxxxxxxxxx" style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;background:var(--c1)">
+            <div class="brow" style="margin-top:12px"><button class="bp" onclick="renovarToken('conta1')">Renovar token</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Conta 2 — Universal Vendas</h3><p class="desc">universalvendas@gmail.com</p>
+          <div id="t2-status" style="margin-bottom:16px"><span style="color:var(--c4);font-size:13px">Verificando...</span></div>
+          <div class="div"></div>
+          <div class="brow"><button class="bs" onclick="abrirAuth(2)">↗ Autorizar no MELI</button></div>
+          <div style="margin-top:12px">
+            <label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO</label>
+            <input type="text" id="cod-conta2" placeholder="TG-xxxxxxxxxxxxxxxxxxxx" style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;background:var(--c1)">
+            <div class="brow" style="margin-top:12px"><button class="bp" onclick="renovarToken('conta2')">Renovar token</button></div>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -514,574 +420,626 @@ const FOTO_PADRAO_EMBED = null;
 </div>
 
 <div class="toast" id="toast-el"></div>
-<div class="loading-overlay" id="loading-overlay"><div class="spinner"></div><div class="loading-msg" id="loading-msg">Processando...</div></div>
 
 <script>
+// ════════════════════════════════════════════════════════
+// CONSTANTES
+// ════════════════════════════════════════════════════════
+const API = location.hostname === 'localhost' ? 'http://localhost:5000' : '';
 const FAMILIAS = [
-  { id:'1440439500323454', titulo:'Kit 6 Jogo Americano Redondo 38cm' },
-  { id:'2463760158107016', titulo:'Kit 8 Jogo Americano Redondo 38cm' },
-  { id:'764882427383523',  titulo:'Kit 4 Jogo Americano Redondo 38cm' },
-  { id:'3319000000000001', titulo:'Toalha de Mesa Redonda 1,80m' },
-  { id:'3319000000000002', titulo:'Toalha de Mesa Retangular 2,40m' },
+  {id:'1440439500323454', titulo:'Kit 6 Jogo Americano Redondo 38cm'},
+  {id:'2463760158107016', titulo:'Kit 8 Jogo Americano Redondo 38cm'},
+  {id:'7648824273835234', titulo:'Kit 4 Jogo Americano Redondo 38cm'},
+  {id:'3319000000000001', titulo:'Toalha de Mesa Redonda 1,80m'},
+  {id:'3319000000000002', titulo:'Toalha de Mesa Retangular 2,40m'},
 ];
+const SAVE_KEY   = 'meli_rascunho';
+const REG_KEY    = 'meli_registros';
+const LOGS_KEY   = 'meli_logs';
+const SESS_KEY   = 'meli_sessao';
 
+// ════════════════════════════════════════════════════════
+// ESTADO
+// ════════════════════════════════════════════════════════
 let linhaId = 0;
-let bancoid = 0;
-const contas = { c1:true, c2:false };
-
-// banco: { id, variacao, modo:'onedrive'|'pasta'|'upload', valor, files, ok }
+let bancoid  = 0;
+let filtroAtivo = 'todos';
+const contas = {c1:true, c2:false};
 const bancoDeFotos = {};
-let fotoPadrao = null; // inicializado com embed após page load
+let fotoPadrao = null;
 
-// LOGIN
-function login(){
-  const USR={adriana:{nome:'Adriana',cargo:'Administrador',av:'AD'},joao:{nome:'João',cargo:'Operador',av:'JO'}};
-  const k=document.getElementById('iu').value.toLowerCase();
-  const d=USR[k]||{nome:k.charAt(0).toUpperCase()+k.slice(1),cargo:'Operador',av:k.substring(0,2).toUpperCase()};
-  document.getElementById('unm').textContent=d.nome;
-  document.getElementById('ucg').textContent=d.cargo;
-  document.getElementById('uav').textContent=d.av;
-  document.getElementById('tela-login').style.display='none';
-  document.getElementById('tela-app').style.display='block';
-  addLinha();addLinha();addLinha();
-  setTimeout(()=>typeof restaurarRascunho==='function'&&restaurarRascunho(),300);
-  // Check token status and show warning if not configured
-  setTimeout(async ()=>{
-    try {
-      const r = await fetch(API+'/api/tokens/status');
-      const d = await r.json();
-      const semToken = ['conta1','conta2'].filter(c=>!d[c]||!d[c].valido);
-      if(semToken.length > 0) {
-        const aviso = document.createElement('div');
-        aviso.id = 'aviso-token';
-        aviso.innerHTML = '<div style="background:#FFF3E0;border:1px solid #FFB74D;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#E65100;display:flex;align-items:center;justify-content:space-between">' +
-          '<span>⚠️ Token MELI não configurado — <a href="#" onclick="nav(\'token\',document.querySelectorAll(\'.ni\')[4])" style="color:var(--az);font-weight:600">Configure aqui antes de criar variações</a></span>' +
-          '<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button></div>';
-        const main = document.querySelector('.main');
-        if(main) main.insertBefore(aviso.firstElementChild, main.firstChild);
-      }
-    } catch(e){}
-  }, 800);
-  // Inicializa foto padrão embarcada
-  fotoPadrao = FOTO_PADRAO_EMBED;
-  const fpSt = document.getElementById('fp-status');
-  if(fpSt) fpSt.innerHTML = '<span class="foto-status-ok">✓ Foto padrão do sistema</span>';
+// ════════════════════════════════════════════════════════
+// LOADING
+// ════════════════════════════════════════════════════════
+function showLoading(msg) {
+  document.getElementById('loading-msg').textContent = msg || 'Aguarde...';
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.remove('show');
+}
+
+// ════════════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════════════
+function toast(msg, tipo) {
+  const t = document.getElementById('toast-el');
+  t.textContent = msg;
+  t.className = 'toast show ' + (tipo||'ok');
+  setTimeout(() => { t.className = 'toast'; }, 3500);
+}
+
+// ════════════════════════════════════════════════════════
+// LOGIN / SESSÃO
+// ════════════════════════════════════════════════════════
+const USERS = {
+  adriana: {senha:'123456', nome:'Adriana', cargo:'Administrador', av:'AD'},
+  joao:    {senha:'123456', nome:'João',    cargo:'Operador',       av:'JO'},
+};
+
+function entrarApp(user) {
+  document.getElementById('unm').textContent = user.nome;
+  document.getElementById('ucg').textContent = user.cargo;
+  document.getElementById('uav').textContent = user.av;
+  document.getElementById('tela-login').style.display = 'none';
+  document.getElementById('tela-app').style.display = 'block';
+  if(!document.getElementById('tbody').children.length) {
+    addLinha(); addLinha(); addLinha();
+  }
+  setTimeout(() => restaurarRascunho(), 300);
+  carregarStatusTokens();
+}
+
+function login() {
+  const k = document.getElementById('iu').value.trim().toLowerCase();
+  const s = document.getElementById('is').value;
+  const u = USERS[k];
+  if(u && u.senha !== s) { toast('Senha incorreta','err'); return; }
+  const user = u || {nome: k.charAt(0).toUpperCase()+k.slice(1), cargo:'Operador', av:k.substring(0,2).toUpperCase()};
+  localStorage.setItem(SESS_KEY, JSON.stringify({k, user, ts:Date.now()}));
+  entrarApp(user);
+}
+
+function sair() {
+  localStorage.removeItem(SESS_KEY);
+  document.getElementById('tela-login').style.display = 'flex';
+  document.getElementById('tela-app').style.display = 'none';
+}
+
+function tentarRestaurarSessao() {
+  try {
+    const raw = localStorage.getItem(SESS_KEY);
+    if(!raw) return false;
+    const {user, ts} = JSON.parse(raw);
+    if(Date.now() - ts > 8 * 3600 * 1000) { localStorage.removeItem(SESS_KEY); return false; }
+    entrarApp(user);
+    return true;
+  } catch(e) { return false; }
+}
+
+// ════════════════════════════════════════════════════════
+// NAVEGAÇÃO
+// ════════════════════════════════════════════════════════
+function nav(id, el) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('ativa'));
+  document.getElementById('sec-'+id).classList.add('ativa');
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('ativo'));
+  if(el) el.classList.add('ativo');
+  if(id === 'historico') renderRegistros();
+  if(id === 'logs')      renderLogs();
+  if(id === 'dashboard') atualizarDashboard();
+  if(id === 'token')     carregarStatusTokens();
+}
+
+// ════════════════════════════════════════════════════════
+// CONTAS
+// ════════════════════════════════════════════════════════
+function toggleConta(n) {
+  contas['c'+n] = !contas['c'+n];
+  document.getElementById('cb'+n).classList.toggle(n===1?'sel':'sel2', contas['c'+n]);
+  document.getElementById('ambas-aviso').style.display = (contas.c1 && contas.c2) ? 'block' : 'none';
+}
+function contasSel() {
+  return [contas.c1 && 'conta1', contas.c2 && 'conta2'].filter(Boolean);
+}
+
+// ════════════════════════════════════════════════════════
+// FOTO PADRÃO
+// ════════════════════════════════════════════════════════
+function setFpModo(modo) {
+  document.getElementById('fpt-od').classList.toggle('ativo', modo==='onedrive');
+  document.getElementById('fpt-up').classList.toggle('ativo', modo==='upload');
+  document.getElementById('fp-path-area').style.display  = modo==='upload' ? 'none' : 'block';
+  document.getElementById('fp-upload-area').style.display = modo==='upload' ? 'block' : 'none';
+  if(!fotoPadrao) fotoPadrao = {modo, valor:'', files:[], ok:false};
+  else fotoPadrao.modo = modo;
   atualizarTabelaFotoRefs();
 }
-function sair(){document.getElementById('tela-login').style.display='flex';document.getElementById('tela-app').style.display='none';}
-
-function nav(id,el){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('ativa'));
-  document.getElementById('sec-'+id).classList.add('ativa');
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('ativo'));
-  if(el)el.classList.add('ativo');
+function onFpPath(val) {
+  fotoPadrao = {modo:'onedrive', valor:val, files:[], ok: val.trim().length > 4};
+  const st = document.getElementById('fp-status');
+  st.innerHTML = fotoPadrao.ok
+    ? '<span class="foto-status-ok">✓ Definida</span>'
+    : '<span class="foto-status-pend">⚠ não definida</span>';
+  atualizarTabelaFotoRefs();
+}
+function onFpFiles(input) {
+  const files = Array.from(input.files);
+  fotoPadrao = {modo:'upload', valor:'', files, ok: files.length > 0};
+  const drop = document.getElementById('fp-drop');
+  if(files.length > 0) {
+    const thumbs = files.slice(0,5).map(f => '<img class="fb-thumb" src="'+URL.createObjectURL(f)+'">').join('');
+    drop.classList.add('ok');
+    drop.innerHTML = '<div class="thumbs">'+thumbs+'</div> <span class="fb-count">'+files.length+' foto'+(files.length>1?'s':'')+'</span><input type="file" multiple accept="image/*" onchange="onFpFiles(this)">';
+    document.getElementById('fp-status').innerHTML = '<span class="foto-status-ok">✓ Definida</span>';
+  }
+  atualizarTabelaFotoRefs();
 }
 
-function toggleConta(n){
-  contas['c'+n]=!contas['c'+n];
-  document.getElementById('cb'+n).classList.toggle(n===1?'sel':'sel2',contas['c'+n]);
-  document.getElementById('ambas-aviso').style.display=(contas.c1&&contas.c2)?'block':'none';
-}
-
-// ── BANCO DE FOTOS ──────────────────────────────────────────
-function addFotoBanco(varNome){
+// ════════════════════════════════════════════════════════
+// BANCO DE FOTOS
+// ════════════════════════════════════════════════════════
+function addFotoBanco(varNome) {
   bancoid++;
-  const id=bancoid;
-  bancoDeFotos[id]={id,variacao:varNome||'',modo:'onedrive',valor:'',files:[],ok:false};
-
-  const div=document.createElement('div');
-  div.className='foto-banco-item';
-  div.id='fb'+id;
-  div.innerHTML=`
-    <div class="fb-variacao">
-      <label>Nome da variação</label>
-      <input id="fbv${id}" placeholder="Ex: Vermelho VEC" value="${varNome||''}"
-        oninput="bancoDeFotos[${id}].variacao=this.value;atualizarTabelaFotoRefs()">
-    </div>
-    <div class="fb-fotos">
-      <label>Fotos</label>
-      <div class="fb-tabs">
-        <button class="fb-tab ativo" id="fbt-od${id}" onclick="setFbModo(${id},'onedrive')">☁ OneDrive</button>
-        <button class="fb-tab" id="fbt-pa${id}" onclick="setFbModo(${id},'pasta')">📁 Pasta</button>
-        <button class="fb-tab" id="fbt-up${id}" onclick="setFbModo(${id},'upload')">⬆ Upload</button>
-      </div>
-      <div id="fbpa${id}" class="fb-path-area" style="display:block">
-        <div class="fb-path-row">
-          <span class="fb-tipo-label fb-tipo-od" id="fbtipolbl${id}">OneDrive</span>
-          <input class="fb-path-input" id="fbinp${id}"
-            placeholder="Cole o link do OneDrive ou o caminho da pasta..."
-            oninput="onFbPath(${id},this.value)">
-        </div>
-      </div>
-      <div id="fbup${id}" class="fb-upload-area">
-        <div class="fb-drop" id="fbdrop${id}">
-          📷 Clique aqui ou arraste as fotos
-          <input type="file" multiple accept="image/*" onchange="onFbFiles(${id},this)">
-        </div>
-      </div>
-    </div>
-    <button class="fb-rm" onclick="rmFotoBanco(${id})" title="Remover">✕</button>`;
+  const id = bancoid;
+  bancoDeFotos[id] = {id, variacao: varNome||'', modo:'onedrive', valor:'', files:[], ok:false};
+  const div = document.createElement('div');
+  div.className = 'foto-banco-item';
+  div.id = 'fb'+id;
+  div.innerHTML =
+    '<div class="fb-variacao">' +
+      '<label>Nome da variação</label>' +
+      '<input id="fbv'+id+'" placeholder="Ex: Vermelho VEC" value="'+(varNome||'')+'" oninput="bancoDeFotos['+id+'].variacao=this.value;atualizarTabelaFotoRefs()">' +
+    '</div>' +
+    '<div class="fb-fotos">' +
+      '<label>Fotos</label>' +
+      '<div class="fb-tabs">' +
+        '<button class="fb-tab ativo" id="fbt-od'+id+'" onclick="setFbModo('+id+',\'onedrive\')">☁ OneDrive</button>' +
+        '<button class="fb-tab" id="fbt-pa'+id+'" onclick="setFbModo('+id+',\'pasta\')">📁 Pasta</button>' +
+        '<button class="fb-tab" id="fbt-up'+id+'" onclick="setFbModo('+id+',\'upload\')">⬆ Upload</button>' +
+      '</div>' +
+      '<div id="fbpa'+id+'" style="display:block">' +
+        '<div class="fb-path-row">' +
+          '<span class="fb-tipo-label fb-tipo-od" id="fbtipolbl'+id+'">OneDrive</span>' +
+          '<input class="fb-path-input" id="fbinp'+id+'" placeholder="Cole o link do OneDrive..." oninput="onFbPath('+id+',this.value)">' +
+        '</div>' +
+      '</div>' +
+      '<div id="fbup'+id+'" style="display:none">' +
+        '<div class="fb-drop" id="fbdrop'+id+'">📷 Clique ou arraste as fotos<input type="file" multiple accept="image/*" onchange="onFbFiles('+id+',this)"></div>' +
+      '</div>' +
+    '</div>' +
+    '<button class="fb-rm" onclick="rmFotoBanco('+id+')" title="Remover">✕</button>';
   document.getElementById('fotos-banco').appendChild(div);
 }
 
-function setFbModo(id, modo){
-  bancoDeFotos[id].modo=modo;
-  bancoDeFotos[id].ok=false;
-  ['od','pa','up'].forEach(m=>{
+function setFbModo(id, modo) {
+  bancoDeFotos[id].modo = modo; bancoDeFotos[id].ok = false;
+  ['od','pa','up'].forEach(m => {
     document.getElementById('fbt-'+m+id)?.classList.toggle('ativo',
       (m==='od'&&modo==='onedrive')||(m==='pa'&&modo==='pasta')||(m==='up'&&modo==='upload'));
   });
-  const lbl=document.getElementById('fbtipolbl'+id);
-  if(lbl){
-    lbl.className='fb-tipo-label '+(modo==='onedrive'?'fb-tipo-od':'fb-tipo-pasta');
-    lbl.textContent=modo==='onedrive'?'OneDrive':'Pasta';
-  }
-  document.getElementById('fbpa'+id).style.display=(modo==='upload'?'none':'block');
-  document.getElementById('fbup'+id).style.display=(modo==='upload'?'block':'none');
-  const inp=document.getElementById('fbinp'+id);
-  if(inp) inp.placeholder=modo==='onedrive'?'Cole o link do OneDrive aqui...':'Caminho da pasta no servidor...';
+  const lbl = document.getElementById('fbtipolbl'+id);
+  if(lbl) { lbl.className='fb-tipo-label '+(modo==='onedrive'?'fb-tipo-od':'fb-tipo-pasta'); lbl.textContent=modo==='onedrive'?'OneDrive':'Pasta'; }
+  const pa = document.getElementById('fbpa'+id); const up = document.getElementById('fbup'+id);
+  if(pa) pa.style.display = modo==='upload' ? 'none' : 'block';
+  if(up) up.style.display = modo==='upload' ? 'block' : 'none';
+  const inp = document.getElementById('fbinp'+id);
+  if(inp) inp.placeholder = modo==='onedrive' ? 'Cole o link do OneDrive...' : 'Caminho da pasta no servidor...';
   atualizarTabelaFotoRefs();
 }
-
-function onFbPath(id,val){
-  bancoDeFotos[id].valor=val;
-  bancoDeFotos[id].ok=val.trim().length>4;
-  const item=document.getElementById('fb'+id);
-  if(item) item.classList.toggle('tem-foto',bancoDeFotos[id].ok);
+function onFbPath(id, val) {
+  bancoDeFotos[id].valor = val; bancoDeFotos[id].ok = val.trim().length > 4;
+  const item = document.getElementById('fb'+id);
+  if(item) item.classList.toggle('tem-foto', bancoDeFotos[id].ok);
   atualizarTabelaFotoRefs();
 }
-
-function onFbFiles(id,input){
-  const files=Array.from(input.files);
-  bancoDeFotos[id].files=files;
-  bancoDeFotos[id].ok=files.length>0;
-  const drop=document.getElementById('fbdrop'+id);
-  const item=document.getElementById('fb'+id);
-  if(files.length>0){
-    const thumbs=files.slice(0,5).map(f=>`<img class="fb-thumb" src="${URL.createObjectURL(f)}">`).join('');
+function onFbFiles(id, input) {
+  const files = Array.from(input.files);
+  bancoDeFotos[id].files = files; bancoDeFotos[id].ok = files.length > 0;
+  const drop = document.getElementById('fbdrop'+id);
+  const item = document.getElementById('fb'+id);
+  if(files.length > 0) {
+    const thumbs = files.slice(0,5).map(f => '<img class="fb-thumb" src="'+URL.createObjectURL(f)+'">').join('');
     drop.classList.add('ok');
-    drop.innerHTML=`<div class="thumbs">${thumbs}</div> <span class="fb-count">${files.length} foto${files.length>1?'s':''}</span>
-      <input type="file" multiple accept="image/*" onchange="onFbFiles(${id},this)">`;
+    drop.innerHTML = '<div class="thumbs">'+thumbs+'</div> <span class="fb-count">'+files.length+' foto'+(files.length>1?'s':'')+'</span><input type="file" multiple accept="image/*" onchange="onFbFiles('+id+',this)">';
     item?.classList.add('tem-foto');
   }
   atualizarTabelaFotoRefs();
 }
+function rmFotoBanco(id) { document.getElementById('fb'+id)?.remove(); delete bancoDeFotos[id]; atualizarTabelaFotoRefs(); }
 
-function rmFotoBanco(id){
-  document.getElementById('fb'+id)?.remove();
-  delete bancoDeFotos[id];
-  atualizarTabelaFotoRefs();
-}
-
-// ── FOTO PADRÃO ──────────────────────────────────────────────
-function setFpModo(modo){
-  ['od','up'].forEach(m=>{
-    document.getElementById('fpt-'+m)?.classList.toggle('ativo',
-      (m==='od'&&modo==='onedrive')||(m==='up'&&modo==='upload'));
-  });
-  document.getElementById('fp-path-area').style.display=(modo==='upload'?'none':'block');
-  document.getElementById('fp-upload-area').style.display=(modo==='upload'?'block':'none');
-  if(fotoPadrao){fotoPadrao.modo=modo;fotoPadrao.ok=false;}
-  else fotoPadrao={modo,valor:'',files:[],ok:false};
-  atualizarTabelaFotoRefs();
-}
-function onFotoPadraoPath(val){
-  fotoPadrao={modo:'onedrive',valor:val,files:[],ok:val.trim().length>4};
-  const st=document.getElementById('fp-status');
-  if(st) st.innerHTML=fotoPadrao.ok?'<span class="foto-status-ok">✓ Definida</span>':'<span class="foto-status-pend">⚠ não definida</span>';
-  atualizarTabelaFotoRefs();
-}
-function onFotoPadraoFiles(input){
-  const files=Array.from(input.files);
-  fotoPadrao={modo:'upload',valor:'',files,ok:files.length>0};
-  const drop=document.getElementById('fp-drop');
-  const st=document.getElementById('fp-status');
-  if(files.length>0){
-    const thumbs=files.slice(0,5).map(f=>`<img class="fb-thumb" src="${URL.createObjectURL(f)}">`).join('');
-    drop.classList.add('ok');
-    drop.innerHTML=`<div class="thumbs">${thumbs}</div> <span class="fb-count">${files.length} foto${files.length>1?'s':''}</span><input type="file" multiple accept="image/*" onchange="onFotoPadraoFiles(this)">`;
-    if(st) st.innerHTML='<span class="foto-status-ok">✓ Definida</span>';
+function getFotoParaVariacao(nome) {
+  const n = nome.trim().toLowerCase();
+  for(const b of Object.values(bancoDeFotos)) {
+    if(b.variacao.trim().toLowerCase() === n && b.ok) return b;
   }
-  atualizarTabelaFotoRefs();
-}
-
-// busca fotos para nome de variação (com fallback para foto padrão)
-function getFotoParaVariacao(nome){
-  const n=nome.trim().toLowerCase();
-  for(const b of Object.values(bancoDeFotos)){
-    if(b.variacao.trim().toLowerCase()===n && b.ok) return b;
-  }
-  // fallback: foto padrão
   if(fotoPadrao && fotoPadrao.ok) return fotoPadrao;
   return null;
 }
 
-function atualizarTabelaFotoRefs(){
-  document.querySelectorAll('#tbody tr').forEach(tr=>{
-    const id=tr.id.replace('ln','');
-    const varInp=document.getElementById('var'+id);
-    const cell=document.getElementById('fotocell'+id);
+function atualizarTabelaFotoRefs() {
+  document.querySelectorAll('#tbody tr').forEach(tr => {
+    const id = tr.id.replace('ln','');
+    const varInp = document.getElementById('var'+id);
+    const cell   = document.getElementById('fotocell'+id);
     if(!varInp||!cell) return;
-    const nome=varInp.value.trim();
-    const b=nome?getFotoParaVariacao(nome):null;
-    const isPadrao=b&&b===fotoPadrao;
-    if(b){
-      if(isPadrao){
-        cell.innerHTML=`<span class="foto-ref-badge ok" style="background:#EEF4FF;color:var(--az)">📷 Padrão</span>`;
-      } else {
-        let desc='';
-        if(b.modo==='onedrive') desc='☁ OneDrive';
-        else if(b.modo==='pasta') desc='📁 Pasta';
-        else desc=`${b.files.length} foto${b.files.length>1?'s':''}`;
-        cell.innerHTML=`<span class="foto-ref-badge ok">✓ ${desc}</span>`;
+    const nome = varInp.value.trim();
+    const b = nome ? getFotoParaVariacao(nome) : null;
+    if(b) {
+      const isPad = b === fotoPadrao;
+      if(isPad) { cell.innerHTML = '<span class="foto-ref-badge padrao">📷 Padrão</span>'; }
+      else {
+        let desc = b.modo==='onedrive' ? '☁ OneDrive' : b.modo==='pasta' ? '📁 Pasta' : b.files.length+' foto'+(b.files.length>1?'s':'');
+        cell.innerHTML = '<span class="foto-ref-badge ok">✓ '+desc+'</span>';
       }
-    } else if(nome){
-      cell.innerHTML=`<span class="foto-ref-badge pend">⚠ sem fotos</span>`;
+    } else if(nome) {
+      cell.innerHTML = '<span class="foto-ref-badge pend">⚠ sem fotos</span>';
     } else {
-      cell.innerHTML=`<span class="foto-ref-badge pend">—</span>`;
+      cell.innerHTML = '<span class="foto-ref-badge pend">—</span>';
     }
   });
 }
 
+// ════════════════════════════════════════════════════════
 // AUTOCOMPLETE FAMÍLIA
-function setupFam(id){
-  const inp=document.getElementById('fam'+id);
-  const drop=document.getElementById('fdrop'+id);
-  inp.addEventListener('input',()=>{
-    const v=inp.value.toLowerCase();
-    if(!v){drop.style.display='none';return;}
-    const m=FAMILIAS.filter(f=>f.titulo.toLowerCase().includes(v)||f.id.includes(v));
-    if(!m.length){drop.style.display='none';return;}
-    drop.innerHTML=m.map(f=>`<div class="fam-opt" onmousedown="selFam(${id},'${f.id}','${f.titulo}')">${f.titulo}<div class="fo-id">${f.id}</div></div>`).join('');
-    drop.style.display='block';
+// ════════════════════════════════════════════════════════
+function setupFam(id) {
+  const inp  = document.getElementById('fam'+id);
+  const drop = document.getElementById('fdrop'+id);
+  inp.addEventListener('input', () => {
+    const v = inp.value.toLowerCase();
+    if(!v) { drop.style.display='none'; return; }
+    const m = FAMILIAS.filter(f => f.titulo.toLowerCase().includes(v) || f.id.includes(v));
+    if(!m.length) { drop.style.display='none'; return; }
+    drop.innerHTML = m.map(f =>
+      '<div class="fam-opt" onmousedown="selFam('+id+',\''+f.id+'\',\''+f.titulo.replace(/'/g,'\\\'')+'\')">' +
+      f.titulo+'<div class="fo-id">'+f.id+'</div></div>'
+    ).join('');
+    drop.style.display = 'block';
   });
-  inp.addEventListener('blur',()=>setTimeout(()=>drop.style.display='none',150));
+  inp.addEventListener('blur', () => setTimeout(() => { drop.style.display='none'; }, 150));
 }
-function selFam(id,fid,titulo){
-  document.getElementById('fam'+id).value=titulo;
-  document.getElementById('famid'+id).value=fid;
-  document.getElementById('fdrop'+id).style.display='none';
-}
-
-// CLONAR LINHA
-function clonarDeCima(id){
-  const rows=Array.from(document.querySelectorAll('#tbody tr'));
-  const idx=rows.findIndex(r=>r.id==='ln'+id);
-  if(idx<=0){toast('Não há linha acima para copiar','err');return;}
-  const acid=rows[idx-1].id.replace('ln','');
-  ['fam','famid','var','preco','est','ean','sku','peso','alt','lar','comp'].forEach(c=>{
-    const s=document.getElementById(c+acid),d=document.getElementById(c+id);
-    if(s&&d)d.value=s.value;
-  });
-  atualizarTabelaFotoRefs();
-  toast('Linha copiada','ok');
+function selFam(id, fid, titulo) {
+  document.getElementById('fam'+id).value = titulo;
+  document.getElementById('famid'+id).value = fid;
+  document.getElementById('fdrop'+id).style.display = 'none';
 }
 
-// ── COLAR COLUNA + NAVEGAÇÃO TECLADO ─────────────────────────
-const COL_ORDER = ['fam','var','preco','est','ean','sku','peso','alt','lar','comp'];
+// ════════════════════════════════════════════════════════
+// COLAR COLUNA (PASTE ESTILO EXCEL) + NAVEGAÇÃO SETAS
+// ════════════════════════════════════════════════════════
+const NAV_COLS = ['fam','var','preco','est','ean','sku','peso','alt','lar','comp'];
 
-function getRowsAndIdx(id){ 
-  const rows=Array.from(document.querySelectorAll('#tbody tr'));
-  return {rows, idx:rows.findIndex(r=>r.id==='ln'+id)};
-}
-
-function focusCell(rowId, col){
-  const el=document.getElementById(col+rowId);
-  if(el){el.focus();el.select();}
-}
-
-function setupPaste(id){
-  COL_ORDER.forEach((col,colIdx)=>{
-    const inp=document.getElementById(col+id);
+function setupCelulas(id) {
+  NAV_COLS.forEach((col, ci) => {
+    const inp = document.getElementById(col+id);
     if(!inp) return;
 
-    // ── PASTE multi-linha ──
-    inp.addEventListener('paste',e=>{
-      const text=(e.clipboardData||window.clipboardData).getData('text');
-      const lines=text.split(/\n|\r\n|\r/).map(l=>l.trim());
-      while(lines.length>0&&lines[lines.length-1]==='') lines.pop();
-      if(lines.length<=1) return;
+    // Paste de coluna
+    inp.addEventListener('paste', e => {
+      const text = (e.clipboardData||window.clipboardData).getData('text');
+      const lines = text.split(/\n|\r\n|\r/).map(l => l.trim());
+      while(lines.length && lines[lines.length-1]==='') lines.pop();
+      if(lines.length <= 1) return;
       e.preventDefault();
-      const {rows,idx}=getRowsAndIdx(id);
-      if(idx<0) return;
-      const needed=(idx+lines.length)-rows.length;
-      for(let i=0;i<needed;i++) addLinha();
-      const updRows=Array.from(document.querySelectorAll('#tbody tr'));
-      lines.forEach((val,i)=>{
-        const rid=updRows[idx+i]?.id.replace('ln','');
+      const rows = Array.from(document.querySelectorAll('#tbody tr'));
+      const ri   = rows.findIndex(r => r.id === 'ln'+id);
+      if(ri < 0) return;
+      const needed = (ri + lines.length) - rows.length;
+      for(let i=0; i<needed; i++) addLinha();
+      const updRows = Array.from(document.querySelectorAll('#tbody tr'));
+      lines.forEach((val, i) => {
+        const rid = updRows[ri+i]?.id.replace('ln','');
         if(!rid) return;
-        const t=document.getElementById(col+rid);
-        if(t){t.value=val;t.dispatchEvent(new Event('input',{bubbles:true}));}
+        const t = document.getElementById(col+rid);
+        if(t) { t.value=val; t.dispatchEvent(new Event('input',{bubbles:true})); }
       });
       atualizarTabelaFotoRefs();
       toast(lines.length+' células coladas','ok');
     });
 
-    // ── TECLADO ──
-    inp.addEventListener('keydown',e=>{
-      const {rows,idx}=getRowsAndIdx(id);
-
-      // Ctrl+Enter ou Ctrl+D = preencher coluna inteira com valor atual
-      if((e.key==='Enter'||e.key==='d'||e.key==='D')&&(e.ctrlKey||e.metaKey)){
-        e.preventDefault();
-        const val=inp.value;
-        rows.forEach(r=>{
-          const rid=r.id.replace('ln','');
-          const t=document.getElementById(col+rid);
-          if(t&&t!==inp){t.value=val;t.dispatchEvent(new Event('input',{bubbles:true}));}
-        });
-        atualizarTabelaFotoRefs();
-        toast('Coluna preenchida com "'+val+'"','ok');
-        return;
-      }
-
-      // Enter ou ArrowDown = próxima linha
-      if(e.key==='Enter'||e.key==='ArrowDown'){
-        e.preventDefault();
-        if(idx>=0&&idx<rows.length-1){
-          const nid=rows[idx+1].id.replace('ln','');
-          focusCell(nid,col);
-        } else if(e.key==='Enter'){
-          addLinha();
-          setTimeout(()=>{
-            const nr=document.querySelectorAll('#tbody tr');
-            const nid=nr[nr.length-1].id.replace('ln','');
-            focusCell(nid,col);
-          },50);
-        }
-        return;
-      }
-
-      // ArrowUp = linha acima
-      if(e.key==='ArrowUp'){
-        e.preventDefault();
-        if(idx>0){
-          const pid=rows[idx-1].id.replace('ln','');
-          focusCell(pid,col);
-        }
-        return;
-      }
-
-      // Tab / ArrowRight = próxima coluna
-      if(e.key==='Tab'&&!e.shiftKey){
-        e.preventDefault();
-        if(colIdx<COL_ORDER.length-1) focusCell(id,COL_ORDER[colIdx+1]);
-        return;
-      }
-      if(e.key==='Tab'&&e.shiftKey){
-        e.preventDefault();
-        if(colIdx>0) focusCell(id,COL_ORDER[colIdx-1]);
-        return;
-      }
-    });
-  });
-
-  // Navegação com setas entre células (←→↑↓)
-  const navCols = ['fam','var','preco','est','ean','sku','peso','alt','lar','comp'];
-  navCols.forEach((col, ci) => {
-    const inp = document.getElementById(col+id);
-    if(!inp) return;
+    // Navegação por setas / Tab / Enter
     inp.addEventListener('keydown', e => {
       const rows = Array.from(document.querySelectorAll('#tbody tr'));
-      const ri = rows.findIndex(r => r.id === 'ln'+id);
-      if(e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)) {
-        // próxima coluna ou próxima linha
-        if(ci < navCols.length-1) {
-          e.preventDefault();
-          document.getElementById(navCols[ci+1]+id)?.focus();
-        } else if(ri < rows.length-1) {
-          e.preventDefault();
-          const nextId = rows[ri+1].id.replace('ln','');
-          document.getElementById(navCols[0]+nextId)?.focus();
-        }
-      } else if(e.key === 'ArrowLeft' || (e.key === 'Tab' && e.shiftKey)) {
-        if(ci > 0) {
-          e.preventDefault();
-          document.getElementById(navCols[ci-1]+id)?.focus();
-        } else if(ri > 0) {
-          e.preventDefault();
-          const prevId = rows[ri-1].id.replace('ln','');
-          document.getElementById(navCols[navCols.length-1]+prevId)?.focus();
-        }
-      } else if(e.key === 'ArrowDown') {
-        if(ri < rows.length-1) {
-          e.preventDefault();
-          const nextId = rows[ri+1].id.replace('ln','');
-          document.getElementById(col+nextId)?.focus();
-        }
-      } else if(e.key === 'ArrowUp') {
-        if(ri > 0) {
-          e.preventDefault();
-          const prevId = rows[ri-1].id.replace('ln','');
-          document.getElementById(col+prevId)?.focus();
-        }
-      } else if(e.key === 'Enter') {
+      const ri   = rows.findIndex(r => r.id === 'ln'+id);
+      if(ri < 0) return;
+      const goTo = (col2, row2) => {
+        if(row2 < 0 || row2 >= rows.length) return;
         e.preventDefault();
-        if(ri < rows.length-1) {
-          const nextId = rows[ri+1].id.replace('ln','');
-          document.getElementById(col+nextId)?.focus();
-        } else {
-          addLinha();
-          setTimeout(()=>{
-            const newRows = Array.from(document.querySelectorAll('#tbody tr'));
-            const newId = newRows[newRows.length-1].id.replace('ln','');
-            document.getElementById(navCols[0]+newId)?.focus();
-          },50);
+        const rid2 = rows[row2].id.replace('ln','');
+        document.getElementById(col2+rid2)?.focus();
+      };
+      if(e.key==='ArrowRight' || (e.key==='Tab'&&!e.shiftKey)) {
+        if(ci < NAV_COLS.length-1) goTo(NAV_COLS[ci+1], ri);
+        else goTo(NAV_COLS[0], ri+1);
+      } else if(e.key==='ArrowLeft' || (e.key==='Tab'&&e.shiftKey)) {
+        if(ci > 0) goTo(NAV_COLS[ci-1], ri);
+        else goTo(NAV_COLS[NAV_COLS.length-1], ri-1);
+      } else if(e.key==='ArrowDown') { goTo(col, ri+1); }
+        else if(e.key==='ArrowUp')   { goTo(col, ri-1); }
+        else if(e.key==='Enter') {
+          e.preventDefault();
+          if(ri < rows.length-1) {
+            goTo(col, ri+1);
+          } else {
+            addLinha();
+            setTimeout(() => {
+              const newRows = Array.from(document.querySelectorAll('#tbody tr'));
+              const nid = newRows[newRows.length-1].id.replace('ln','');
+              document.getElementById(NAV_COLS[0]+nid)?.focus();
+            }, 30);
+          }
         }
-      }
     });
   });
 }
 
-// ADD / REMOVE LINHA
-function addLinha(){
+// ════════════════════════════════════════════════════════
+// TABELA — ADD / REMOVE / CLONE
+// ════════════════════════════════════════════════════════
+function addLinha() {
   linhaId++;
-  const id=linhaId;
-  const tr=document.createElement('tr');
-  tr.id='ln'+id;
-  tr.innerHTML=`
-    <td class="num">${id}</td>
-    <td><div class="fam-wrap">
-      <input class="cell-input" id="fam${id}" placeholder="Nome ou ID da família..." autocomplete="off">
-      <input type="hidden" id="famid${id}">
-      <div class="fam-dropdown" id="fdrop${id}"></div>
-    </div></td>
-    <td><input class="cell-input" id="var${id}" placeholder="Ex: Vermelho VEC"
-      oninput="atualizarTabelaFotoRefs()"></td>
-    <td><input class="cell-input" type="number" step="0.01" id="preco${id}" placeholder="0,00"></td>
-    <td><input class="cell-input" type="number" min="0" id="est${id}" value="0"></td>
-    <td style="min-width:165px"><input class="cell-input" id="ean${id}" placeholder="0000000000000" maxlength="13" style="font-family:'DM Mono',monospace;letter-spacing:1px"></td>
-    <td class="sku-cell"><input class="cell-input" id="sku${id}" placeholder="SKU-001" style="min-width:155px"></td>
-    <td><input class="cell-input" type="number" id="peso${id}" placeholder="g"></td>
-    <td><input class="cell-input" type="number" id="alt${id}" placeholder="cm"></td>
-    <td><input class="cell-input" type="number" id="lar${id}" placeholder="cm"></td>
-    <td><input class="cell-input" type="number" id="comp${id}" placeholder="cm"></td>
-    <td class="foto-ref-cell" id="fotocell${id}">
-      <span class="foto-ref-badge pend">—</span>
-    </td>
-    <td class="act-cell">
-      <button class="act-btn clone" onclick="clonarDeCima(${id})" title="Copiar linha acima">⤵</button>
-      <button class="act-btn rm" onclick="rmLinha(${id})" title="Remover">✕</button>
-    </td>`;
+  const id = linhaId;
+  const tr = document.createElement('tr');
+  tr.id = 'ln'+id;
+  tr.innerHTML =
+    '<td class="num">'+id+'</td>' +
+    '<td><div class="fam-wrap">' +
+      '<input class="cell-input" id="fam'+id+'" placeholder="Nome ou ID da família..." autocomplete="off">' +
+      '<input type="hidden" id="famid'+id+'">' +
+      '<div class="fam-dropdown" id="fdrop'+id+'"></div>' +
+    '</div></td>' +
+    '<td><input class="cell-input" id="var'+id+'" placeholder="Ex: Vermelho VEC" oninput="atualizarTabelaFotoRefs()"></td>' +
+    '<td><input class="cell-input" type="number" step="0.01" id="preco'+id+'" placeholder="0,00"></td>' +
+    '<td><input class="cell-input" type="number" min="0" id="est'+id+'" value="0"></td>' +
+    '<td style="min-width:165px"><input class="cell-input mono" id="ean'+id+'" placeholder="0000000000000" maxlength="13"></td>' +
+    '<td><input class="cell-input" id="sku'+id+'" placeholder="SKU-001"></td>' +
+    '<td><input class="cell-input" type="number" id="peso'+id+'" placeholder="g"></td>' +
+    '<td><input class="cell-input" type="number" id="alt'+id+'" placeholder="cm"></td>' +
+    '<td><input class="cell-input" type="number" id="lar'+id+'" placeholder="cm"></td>' +
+    '<td><input class="cell-input" type="number" id="comp'+id+'" placeholder="cm"></td>' +
+    '<td class="foto-ref-cell" id="fotocell'+id+'"><span class="foto-ref-badge pend">—</span></td>' +
+    '<td class="act-cell">' +
+      '<button class="act-btn clone" onclick="clonarLinha('+id+')" title="Copiar linha acima">⤵</button>' +
+      '<button class="act-btn rm" onclick="rmLinha('+id+')" title="Remover">✕</button>' +
+    '</td>';
   document.getElementById('tbody').appendChild(tr);
   setupFam(id);
-  setupPaste(id);
+  setupCelulas(id);
 }
 
-function rmLinha(id){document.getElementById('ln'+id)?.remove();}
+function rmLinha(id) { document.getElementById('ln'+id)?.remove(); }
 
-function limpar(){
-  document.getElementById('tbody').innerHTML='';
-  document.getElementById('fotos-banco').innerHTML='';
-  Object.keys(bancoDeFotos).forEach(k=>delete bancoDeFotos[k]);
-  linhaId=0;bancoid=0;
-  document.getElementById('resultado').innerHTML='';
-  addLinha();addLinha();addLinha();
+function clonarLinha(id) {
+  const rows = Array.from(document.querySelectorAll('#tbody tr'));
+  const idx  = rows.findIndex(r => r.id === 'ln'+id);
+  if(idx <= 0) { toast('Não há linha acima para copiar','err'); return; }
+  const acid = rows[idx-1].id.replace('ln','');
+  ['fam','famid','var','preco','est','ean','sku','peso','alt','lar','comp'].forEach(c => {
+    const s = document.getElementById(c+acid);
+    const d = document.getElementById(c+id);
+    if(s && d) d.value = s.value;
+  });
+  atualizarTabelaFotoRefs();
+  toast('Linha copiada','ok');
 }
 
-// SIMULAR / EXECUTAR
-function getLinhas(){
-  return Array.from(document.querySelectorAll('#tbody tr')).reduce((acc,tr)=>{
-    const id=tr.id.replace('ln','');
-    const fam=document.getElementById('fam'+id)?.value.trim();
-    const v=document.getElementById('var'+id)?.value.trim();
-    const p=document.getElementById('preco'+id)?.value;
-    if(!fam||!v||!p)return acc;
-    const b=getFotoParaVariacao(v);
-    let fotoInfo=b?
-      (b.modo==='onedrive'?'☁ OneDrive':b.modo==='pasta'?`📁 ${b.valor}`:b.files.length+' foto(s)')
-      :'⚠ SEM FOTOS';
-    acc.push({fam,variacao:v,preco:Number(p).toFixed(2),est:document.getElementById('est'+id)?.value||'0',fotoInfo,temFoto:!!b});
+function limpar() {
+  document.getElementById('tbody').innerHTML = '';
+  document.getElementById('fotos-banco').innerHTML = '';
+  document.getElementById('resultado').innerHTML = '';
+  Object.keys(bancoDeFotos).forEach(k => delete bancoDeFotos[k]);
+  linhaId = 0; bancoid = 0; fotoPadrao = null;
+  document.getElementById('fp-inp').value = '';
+  document.getElementById('fp-status').innerHTML = '<span class="foto-status-pend">⚠ não definida</span>';
+  localStorage.removeItem(SAVE_KEY);
+  addLinha(); addLinha(); addLinha();
+}
+
+function getLinhas() {
+  return Array.from(document.querySelectorAll('#tbody tr')).reduce((acc, tr) => {
+    const id = tr.id.replace('ln','');
+    const fam   = document.getElementById('fam'+id)?.value.trim();
+    const famid = document.getElementById('famid'+id)?.value.trim();
+    const v     = document.getElementById('var'+id)?.value.trim();
+    const p     = document.getElementById('preco'+id)?.value;
+    if(!fam||!v||!p) return acc;
+    acc.push({
+      fam, familia_id: famid||fam, variacao:v,
+      preco: Number(p).toFixed(2),
+      est:   document.getElementById('est'+id)?.value||'0',
+      ean:   document.getElementById('ean'+id)?.value||'',
+      sku:   document.getElementById('sku'+id)?.value||'',
+      peso:  document.getElementById('peso'+id)?.value||null,
+      alt:   document.getElementById('alt'+id)?.value||null,
+      lar:   document.getElementById('lar'+id)?.value||null,
+      comp:  document.getElementById('comp'+id)?.value||null,
+    });
     return acc;
-  },[]);
+  }, []);
 }
 
-function contasSel(){return[contas.c1&&'Conta 1 — JA Comercial',contas.c2&&'Conta 2 — Universal Vendas'].filter(Boolean);}
+// ════════════════════════════════════════════════════════
+// AUTO-SAVE RASCUNHO
+// ════════════════════════════════════════════════════════
+function salvarRascunho() {
+  try {
+    const dados = getLinhas();
+    if(dados.length) localStorage.setItem(SAVE_KEY, JSON.stringify({dados, ts:Date.now()}));
+  } catch(e){}
+}
+function restaurarRascunho() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return;
+    const {dados, ts} = JSON.parse(raw);
+    if(Date.now()-ts > 86400000) { localStorage.removeItem(SAVE_KEY); return; }
+    if(!dados||!dados.length) return;
+    document.getElementById('tbody').innerHTML = '';
+    linhaId = 0;
+    dados.forEach(d => {
+      addLinha();
+      const id = linhaId;
+      const set = (f,v) => { const el=document.getElementById(f+id); if(el&&v!=null) el.value=v; };
+      set('fam',d.fam); set('famid',d.familia_id||d.famid);
+      set('var',d.variacao); set('preco',d.preco); set('est',d.est);
+      set('ean',d.ean); set('sku',d.sku); set('peso',d.peso);
+      set('alt',d.alt); set('lar',d.lar); set('comp',d.comp);
+    });
+    atualizarTabelaFotoRefs();
+    const mins = Math.round((Date.now()-ts)/60000);
+    const av = document.createElement('div');
+    av.style.cssText = 'background:#FFF8E1;border:1px solid #FFD54F;border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:13px;color:#F57F17;display:flex;align-items:center;justify-content:space-between';
+    av.innerHTML = '<span>💾 Rascunho restaurado (salvo há '+(mins<60?mins+'min':Math.round(mins/60)+'h')+') — '+dados.length+' linha(s)</span><button onclick="localStorage.removeItem(\''+SAVE_KEY+'\');this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#F57F17">✕</button>';
+    const card = document.querySelector('#sec-variacoes .card:last-of-type');
+    if(card) card.parentElement.insertBefore(av, card);
+  } catch(e){}
+}
+setInterval(salvarRascunho, 30000);
+document.addEventListener('input', e => { if(e.target.closest('#tbody')) salvarRascunho(); });
 
-function simular(){
-  const dados=getLinhas();
-  if(!dados.length){toast('Preencha ao menos uma linha completa','err');return;}
-  const cs=contasSel();
-  if(!cs.length){toast('Selecione ao menos uma conta','err');return;}
-  const semFoto=dados.filter(d=>!d.temFoto);
-  const linhas=dados.map((d,i)=>`• [${i+1}] ${d.fam} → ${d.variacao} | R$ ${d.preco} | ${d.fotoInfo}`).join('<br>');
-  let extra='';
-  if(semFoto.length) extra=`<div class="res-warn">⚠ ${semFoto.length} variação(ões) sem fotos definidas: ${semFoto.map(d=>d.variacao).join(', ')}</div>`;
-  document.getElementById('resultado').innerHTML=`
-    <div class="res-ok" style="margin-top:16px">
-      <h4>✓ Simulação OK — ${dados.length} variação(ões) × ${cs.length} conta(s) = ${dados.length*cs.length} item(ns)</h4>
-      <p style="margin:8px 0 4px"><strong>Contas:</strong> ${cs.join(' + ')}</p>
-      <p>${linhas}</p>
-    </div>${extra}`;
-  toast(`Simulação OK — ${dados.length*cs.length} item(ns) prontos`,'ok');
+// ════════════════════════════════════════════════════════
+// SISTEMA DE REGISTROS
+// ════════════════════════════════════════════════════════
+function carregarRegistros() { try { return JSON.parse(localStorage.getItem(REG_KEY)||'[]'); } catch(e){ return []; } }
+function salvarRegistroItem(reg) {
+  const regs = carregarRegistros();
+  regs.unshift(reg);
+  if(regs.length > 300) regs.splice(300);
+  localStorage.setItem(REG_KEY, JSON.stringify(regs));
+}
+function atualizarRegistroItem(id, status, resultados) {
+  const regs = carregarRegistros();
+  const idx  = regs.findIndex(r => r.id === id);
+  if(idx < 0) return;
+  regs[idx].status     = status;
+  regs[idx].resultados = resultados;
+  regs[idx].tsAtualizado = new Date().toISOString();
+  localStorage.setItem(REG_KEY, JSON.stringify(regs));
+  // também grava no LOGS_KEY
+  adicionarLog(regs[idx].tipo, {resumo: regs[idx].resumo, resultados});
+  if(document.getElementById('sec-historico').classList.contains('ativa')) renderRegistros();
 }
 
-function executar(){
-  const dados=getLinhas();
-  if(!dados.length){toast('Preencha ao menos uma linha','err');return;}
-  if(!contasSel().length){toast('Selecione ao menos uma conta','err');return;}
-  const semFoto=dados.filter(d=>!d.temFoto);
-  if(semFoto.length){toast(`${semFoto.length} variação(ões) sem fotos — configure antes de criar`,'err');return;}
-  toast(`Criando ${dados.length*contasSel().length} variação(ões)...`,'ok');
-  setTimeout(()=>toast('Variações criadas com sucesso! ✓','ok'),2500);
+function reprocessar(btn) { reprocessarRegistro(btn.dataset.rid); }
+function reprocessarRegistro(id) {
+  const reg = carregarRegistros().find(r => r.id === id);
+  if(!reg||!reg.dadosOriginais) { toast('Dados originais não encontrados','err'); return; }
+  nav('variacoes', document.getElementById('nav-variacoes'));
+  setTimeout(() => {
+    document.getElementById('tbody').innerHTML = '';
+    linhaId = 0;
+    reg.dadosOriginais.forEach(d => {
+      addLinha();
+      const id2 = linhaId;
+      const set = (f,v) => { const el=document.getElementById(f+id2); if(el&&v!=null&&v!=='') el.value=v; };
+      set('fam',d.fam); set('famid',d.familia_id||d.famid);
+      set('var',d.variacao); set('preco',d.preco); set('est',d.est);
+      set('ean',d.ean); set('sku',d.sku); set('peso',d.peso);
+      set('alt',d.alt); set('lar',d.lar); set('comp',d.comp);
+    });
+    if(reg.contas) {
+      if(reg.contas.includes('conta1') && !contas.c1) toggleConta(1);
+      if(reg.contas.includes('conta2') && !contas.c2) toggleConta(2);
+    }
+    atualizarTabelaFotoRefs();
+    toast('Tabela preenchida com '+reg.dadosOriginais.length+' linha(s) — revise e clique em Criar','ok');
+  }, 300);
 }
 
-function showLoading(msg){
-  const o=document.getElementById('loading-overlay');
-  const m=document.getElementById('loading-msg');
-  if(o){o.classList.add('show');if(m)m.textContent=msg||'Processando...';}
+const ST_MAP = {
+  processando: {cls:'st-processando', icon:'⏳', label:'Em processamento'},
+  concluido:   {cls:'st-concluido',   icon:'✓',  label:'Concluído'},
+  parcial:     {cls:'st-parcial',     icon:'⚠',  label:'Parcial'},
+  cancelado:   {cls:'st-cancelado',   icon:'—',  label:'Cancelado'},
+  erro:        {cls:'st-erro',        icon:'✗',  label:'Erro'},
+  simulado:    {cls:'st-simulado',    icon:'🔵', label:'Simulado'},
+};
+
+function renderRegistros() {
+  const cont = document.getElementById('registros-container');
+  if(!cont) return;
+  let regs = carregarRegistros();
+  if(filtroAtivo !== 'todos') regs = regs.filter(r => r.tipo === filtroAtivo);
+  if(!regs.length) {
+    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:48px 24px">Nenhum registro ainda.<br><span style="font-size:13px;display:block;margin-top:8px">Ao simular ou criar variações, os dados aparecem aqui mesmo se der erro.</span></div>';
+    return;
+  }
+  cont.innerHTML = regs.map(reg => {
+    const ts   = new Date(reg.ts);
+    const dt   = ts.toLocaleDateString('pt-BR')+' '+ts.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const st   = ST_MAP[reg.status] || ST_MAP.processando;
+    const tipo = reg.tipo==='criar'
+      ? '<span style="font-size:10px;background:#E8F5E9;color:var(--ve);padding:2px 8px;border-radius:4px;font-weight:600">CRIAR</span>'
+      : '<span style="font-size:10px;background:#EEF4FF;color:var(--az);padding:2px 8px;border-radius:4px;font-weight:600">SIM</span>';
+    const stBadge = '<span class="'+st.cls+'">'+st.icon+' '+st.label+'</span>';
+    const podReproc = reg.dadosOriginais && reg.tipo==='criar';
+    const reBtn = podReproc ? '<button class="bs" data-rid="'+reg.id+'" onclick="reprocessar(this)" style="height:32px;padding:0 12px;font-size:12px">↻ Reprocessar</button>' : '';
+    const rows = (reg.resultados||[]).map(r => {
+      const ic  = r.ok ? '<span style="color:var(--ve)">✓</span>' : r.status==='processando' ? '⏳' : '<span style="color:var(--vm)">✗</span>';
+      const mlb = r.mlb_criado ? '<a href="https://www.mercadolivre.com.br/anuncios/'+r.mlb_criado+'" target="_blank" class="mlbl">'+r.mlb_criado+'</a>' : '—';
+      const err = r.erro ? '<span style="font-size:11px;color:var(--vm);display:block">'+String(r.erro).substring(0,100)+'</span>' : '';
+      return '<tr><td style="text-align:center;width:28px;padding:6px">'+ic+'</td><td style="font-size:12px;color:var(--c5);padding:6px 8px">'+(r.conta||'—')+'</td><td style="font-size:13px;padding:6px 8px">'+(r.variacao||'—')+'</td><td style="padding:6px 8px">'+mlb+'</td><td style="padding:6px 8px">'+err+'</td></tr>';
+    }).join('');
+    const tbl = rows
+      ? '<div style="margin-top:12px;border:1px solid var(--c2);border-radius:6px;overflow:hidden"><table style="width:100%;border-collapse:collapse"><thead><tr style="background:var(--c2)"><th style="padding:6px 8px;font-size:10px;color:var(--c4);font-weight:600;width:28px"></th><th style="padding:6px 8px;font-size:10px;color:var(--c4);font-weight:600">Conta</th><th style="padding:6px 8px;font-size:10px;color:var(--c4);font-weight:600">Variação</th><th style="padding:6px 8px;font-size:10px;color:var(--c4);font-weight:600">MLB</th><th style="padding:6px 8px;font-size:10px;color:var(--c4);font-weight:600">Detalhe</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      : '';
+    return '<div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+tipo+' <span style="font-size:12px;color:var(--c4)">'+dt+'</span> <span style="font-size:13px;color:var(--c5);flex:1">'+(reg.resumo||'')+'</span> '+stBadge+' '+reBtn+'</div>'+tbl+'</div>';
+  }).join('');
 }
-function hideLoading(){
-  document.getElementById('loading-overlay')?.classList.remove('show');
+
+function setFiltro(tipo) {
+  filtroAtivo = tipo;
+  ['todos','criar','simular'].forEach(t => {
+    const btn = document.getElementById('fil-'+t);
+    if(btn) btn.classList.toggle('ativo', t===tipo);
+  });
+  renderRegistros();
 }
 
-function toast(msg,tipo){
-  const t=document.getElementById('toast-el');
-  t.textContent=msg;t.className='toast show '+tipo;
-  setTimeout(()=>t.className='toast',3500);
-}
-document.getElementById('is')?.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-
-
-// ═══════════════════════════════════════════════════════════
-// LOGS — registro persistente de cada chamada à API MELI
-// ═══════════════════════════════════════════════════════════
-const LOGS_KEY = 'meli_panel_logs';
-const MAX_LOGS = 200;
-
+// ════════════════════════════════════════════════════════
+// LOGS
+// ════════════════════════════════════════════════════════
+function carregarLogs() { try { return JSON.parse(localStorage.getItem(LOGS_KEY)||'[]'); } catch(e){ return []; } }
 function adicionarLog(tipo, dados) {
   try {
     const logs = carregarLogs();
-    logs.unshift({
-      id: Date.now(),
-      ts: new Date().toISOString(),
-      tipo, // 'criar'|'simular'|'token'|'erro'
-      ...dados
-    });
-    if(logs.length > MAX_LOGS) logs.splice(MAX_LOGS);
+    logs.unshift({id:Date.now(), ts:new Date().toISOString(), tipo, ...dados});
+    if(logs.length > 200) logs.splice(200);
     localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
-    if(document.getElementById('sec-logs')?.classList.contains('ativa')) renderizarLogs();
+    if(document.getElementById('sec-logs').classList.contains('ativa')) renderLogs();
   } catch(e){}
 }
-
-function carregarLogs() {
-  try { return JSON.parse(localStorage.getItem(LOGS_KEY)||'[]'); } catch(e){ return []; }
+function renderLogs() {
+  const cont = document.getElementById('logs-container');
+  if(!cont) return;
+  const logs = carregarLogs();
+  if(!logs.length) { cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum log ainda. Os logs aparecem aqui após criar ou simular.</div>'; return; }
+  cont.innerHTML = logs.map(l => {
+    const ts  = new Date(l.ts).toLocaleString('pt-BR');
+    const ok  = (l.resultados||[]).filter(r=>r.ok).length;
+    const err = (l.resultados||[]).filter(r=>!r.ok).length;
+    const cor = l.tipo==='criar' ? 'var(--ve)' : 'var(--az)';
+    const badge = '<span style="font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;background:'+cor+'20;color:'+cor+'">'+l.tipo.toUpperCase()+'</span>';
+    const linhas = (l.resultados||[]).map(r => {
+      if(r.dry_run) return '<div style="font-size:12px;color:var(--c5);padding:3px 0">• [SIM] '+r.conta+' | '+r.variacao+' → '+(r.payload_resumo||'ok')+'</div>';
+      if(r.ok) return '<div style="font-size:12px;color:var(--ve);padding:3px 0">• ✓ '+r.conta+' | '+r.variacao+' → <a href="https://www.mercadolivre.com.br/anuncios/'+r.mlb_criado+'" target="_blank" class="mlbl">'+r.mlb_criado+'</a></div>';
+      return '<div style="font-size:12px;color:var(--vm);padding:3px 0">• ✗ '+r.conta+' | '+r.variacao+' → '+String(r.erro||'erro').substring(0,100)+'</div>';
+    }).join('');
+    return '<div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+badge+' <span style="font-size:12px;color:var(--c4)">'+ts+'</span> <span style="flex:1;font-size:13px;color:var(--c5)">'+(l.resumo||'')+'</span> <span class="badge '+(ok>0?'bok':'berr')+'">'+ok+' OK'+(err?' / '+err+' erro':'')+'</span></div>'+(linhas||'<span style="font-size:12px;color:var(--c4)">Sem detalhes</span>')+'</div>';
+  }).join('');
 }
-
-function limparLogs() {
-  localStorage.removeItem(LOGS_KEY);
-  renderizarLogs();
-  toast('Logs limpos','ok');
-}
-
 function exportarLogs() {
   const logs = carregarLogs();
-  const sep = '\n─────────────────────────────\n';
+  const sep = '\n' + '─'.repeat(40) + '\n';
   const txt = logs.map(l => {
-    const linhas = (l.resultados||[]).map(r =>
-      '  ' + (r.ok?'OK':'ERR') + ' ' + (r.conta||'') + ' | ' + (r.variacao||'') + ' -> ' + (r.ok?(r.mlb_criado||'OK'):(r.erro||'erro'))
-    ).join('\n');
-    return '[' + l.ts + '] ' + l.tipo.toUpperCase() + ' - ' + (l.resumo||'') + '\n' + linhas;
+    const linhas = (l.resultados||[]).map(r => {
+      const status = r.ok ? 'OK' : 'ERRO';
+      const mlb = r.mlb_criado || '';
+      const err = r.erro || '';
+      return '  ' + status + ' | ' + (r.conta||'') + ' | ' + (r.variacao||'') + (mlb?' -> '+mlb:'') + (err?' -> '+err:'');
+    }).join('\n');
+    return '[' + l.ts + '] ' + (l.tipo||'').toUpperCase() + ' - ' + (l.resumo||'') + '\n' + linhas;
   }).join(sep);
   const a = document.createElement('a');
   a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
@@ -1089,383 +1047,128 @@ function exportarLogs() {
   a.click();
 }
 
-function renderizarLogs() {
-  const cont = document.getElementById('logs-container');
-  if(!cont) return;
-  const logs = carregarLogs();
-  if(!logs.length) {
-    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum log ainda. Os logs aparecem aqui após criar ou simular variações.</div>';
-    return;
-  }
-  cont.innerHTML = logs.map(l => {
-    const ts = new Date(l.ts).toLocaleString('pt-BR');
-    const ok = (l.resultados||[]).filter(r=>r.ok).length;
-    const err = (l.resultados||[]).filter(r=>!r.ok).length;
-    const tipoColor = l.tipo==='criar'?'var(--ve)':l.tipo==='simular'?'var(--az)':'var(--vm)';
-    const badge = `<span class="badge" style="background:${tipoColor}20;color:${tipoColor}">${l.tipo.toUpperCase()}</span>`;
-    const linhas = (l.resultados||[]).map(r => {
-      if(r.dry_run) return `<div style="padding:4px 0;font-size:12px;color:var(--c5)">• [SIM] <b>${r.conta}</b> | ${r.variacao} → ${r.payload_resumo||'ok'}</div>`;
-      if(r.ok) return `<div style="padding:4px 0;font-size:12px;color:var(--ve)">• ✓ <b>${r.conta}</b> | ${r.variacao} → <a href="https://www.mercadolivre.com.br/anuncios/${r.mlb_criado}" target="_blank" style="color:var(--az)">${r.mlb_criado}</a></div>`;
-      return `<div style="padding:4px 0;font-size:12px;color:var(--vm)">• ✗ <b>${r.conta}</b> | ${r.variacao} → ${r.erro||'erro desconhecido'}${r.cause&&r.cause.length?'<br><span style="font-size:11px;color:var(--c4)">Causa: '+JSON.stringify(r.cause)+'</span>':''}</div>`;
-    }).join('');
-    return `<div class="card" style="margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        ${badge}
-        <span style="font-size:12px;color:var(--c4)">${ts}</span>
-        <span style="font-size:12px;color:var(--c5);flex:1">${l.resumo||''}</span>
-        <span class="badge ${ok>0?'bok':'berr'}">${ok} OK${err>0?' / '+err+' erro(s)':''}</span>
-      </div>
-      ${linhas||'<span style="font-size:12px;color:var(--c4)">Sem detalhes</span>'}
-    </div>`;
-  }).join('');
-}
-
-// ── Dashboard: atualizar stats ──
-async function atualizarDashboard() {
+// ════════════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════════════
+function atualizarDashboard() {
   const btn = document.getElementById('btn-refresh-dash');
   if(btn) { btn.textContent='↻ Atualizando...'; btn.disabled=true; }
-  try {
-    await verificarEAtualizarTokens();
-    // Re-render dashboard stats from logs
-    const logs = carregarLogs().filter(l=>l.tipo==='criar');
-    const hoje = new Date().toLocaleDateString('pt-BR');
-    const todayLogs = logs.filter(l=>new Date(l.ts).toLocaleDateString('pt-BR')===hoje);
-    const okHoje = todayLogs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
-    const errTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>!r.ok).length;
-    const okTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
-    // Update stat cards if they exist
-    const cards = document.querySelectorAll('#sec-dashboard .sv');
-    if(cards.length >= 4) {
-      cards[0].textContent = okHoje;
-      cards[2].textContent = okTotal;
-      cards[3].textContent = errTotal;
-    }
-    toast('Dashboard atualizado','ok');
-  } catch(e){ toast('Erro ao atualizar','err'); }
+  const regs = carregarRegistros().filter(r => r.tipo==='criar');
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const todayRegs = regs.filter(r => new Date(r.ts).toLocaleDateString('pt-BR')===hoje);
+  const okHoje  = todayRegs.flatMap(r=>r.resultados||[]).filter(r=>r.ok).length;
+  const okTotal = regs.flatMap(r=>r.resultados||[]).filter(r=>r.ok).length;
+  const errTotal= regs.flatMap(r=>r.resultados||[]).filter(r=>!r.ok).length;
+  const mesAtual= new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const okMes   = regs.filter(r=>{ const d=new Date(r.ts); return d.getMonth()===new Date().getMonth()&&d.getFullYear()===new Date().getFullYear(); }).flatMap(r=>r.resultados||[]).filter(r=>r.ok).length;
+  const pct = (okTotal+errTotal) ? Math.round(okTotal/(okTotal+errTotal)*100)+'%' : '—';
+  const setEl = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  setEl('dash-hoje', okHoje);
+  setEl('dash-hoje-desc', todayRegs.length ? todayRegs[0].resumo : '—');
+  setEl('dash-mes', okMes);
+  setEl('dash-mes-desc', mesAtual);
+  setEl('dash-ok', okTotal);
+  setEl('dash-ok-pct', pct);
+  setEl('dash-err', errTotal);
+  setEl('dash-err-desc', errTotal ? errTotal+' erro(s) total' : 'Sem erros');
+  // Últimos registros
+  const recent = document.getElementById('dash-recent');
+  if(recent) {
+    const ultimos = carregarRegistros().slice(0,5);
+    if(!ultimos.length) { recent.innerHTML=''; return; }
+    const rows = ultimos.map(reg => {
+      const ts = new Date(reg.ts).toLocaleString('pt-BR');
+      const st = ST_MAP[reg.status]||ST_MAP.processando;
+      const ok2 = (reg.resultados||[]).filter(r=>r.ok).length;
+      const err2= (reg.resultados||[]).filter(r=>!r.ok).length;
+      return '<tr><td>'+ts+'</td><td style="font-size:12px">'+(reg.resumo||'—')+'</td><td><span class="'+st.cls+'">'+st.icon+' '+st.label+'</span></td><td><span class="badge '+(err2===0?'bok':'berr')+'">'+ok2+' OK'+(err2?' / '+err2:' ')+'</span></td></tr>';
+    }).join('');
+    recent.innerHTML = '<div class="htable"><table><thead><tr><th>Data</th><th>Operação</th><th>Status</th><th>Resultado</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  }
   if(btn) { btn.textContent='↻ Atualizar'; btn.disabled=false; }
 }
 
-// Expose renderizarLogs to nav
-const _navOrig = window.nav;
-window.nav = function(id, el) {
-  _navOrig(id, el);
-  if(id==='logs') renderizarLogs();
-  if(id==='dashboard') atualizarDashboard();
-  if(id==='token') carregarStatusTokens(false);
-};
-
-
-// ═══════════════════════════════════════════════════════════
-// REGISTROS — Meus Registros com logs reais do localStorage
-// ═══════════════════════════════════════════════════════════
-let _filtroAtivo = 'todos';
-
-function filtrarRegistros(tipo) {
-  _filtroAtivo = tipo;
-  ['todos','sim','criar'].forEach(f => {
-    const btn = document.getElementById('filtro-'+f);
-    if(btn) { btn.style.background=''; btn.style.color=''; btn.style.borderColor=''; }
-  });
-  const btnId = tipo === 'todos' ? 'filtro-todos' : tipo === 'simular' ? 'filtro-sim' : 'filtro-criar';
-  const btn = document.getElementById(btnId);
-  if(btn) { btn.style.background='var(--az)'; btn.style.color='white'; btn.style.borderColor='var(--az)'; }
-  renderizarRegistros();
-}
-
-function getStatusInfo(r) {
-  if(r.dry_run || !r.ok && !r.erro) return { label:'Simulado', color:'var(--az)', bg:'#EEF4FF', icon:'🔵' };
-  if(r.ok) {
-    // Check if MLB is valid - try to determine if published or in review
-    const mlb = r.mlb_criado || '';
-    return { label:'Criado', color:'var(--ve)', bg:'#E8F5E9', icon:'✓', mlb };
-  }
-  const erro = r.erro || '';
-  if(erro.includes('processamento') || erro.includes('pending') || erro.includes('under_review')) {
-    return { label:'Em processamento', color:'#F57F17', bg:'#FFF8E1', icon:'⏳' };
-  }
-  return { label:'Erro', color:'var(--vm)', bg:'#FFEBEE', icon:'✗', detalhe: erro };
-}
-
-function renderizarRegistros() {
-  const cont = document.getElementById('registros-container');
-  if(!cont) return;
-
-  const logs = carregarLogs();
-  const filtrados = _filtroAtivo === 'todos' ? logs : logs.filter(l => l.tipo === _filtroAtivo);
-
-  if(!filtrados.length) {
-    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum registro encontrado.<br>As simulações e criações aparecerão aqui.</div>';
-    return;
-  }
-
-  // Flatten: cada resultado individual vira uma linha
-  const linhas = [];
-  filtrados.forEach(log => {
-    (log.resultados || []).forEach(r => {
-      linhas.push({ log, r });
-    });
-  });
-
-  if(!linhas.length) {
-    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum registro detalhado disponível.</div>';
-    return;
-  }
-
-  const rows = linhas.map(({log, r}) => {
-    const ts = new Date(log.ts);
-    const data = ts.toLocaleDateString('pt-BR');
-    const hora = ts.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-    const st = getStatusInfo(r);
-    const mlbLink = st.mlb
-      ? `<a href="https://www.mercadolivre.com.br/anuncios/${st.mlb}" target="_blank" class="mlbl">${st.mlb}</a>`
-      : '—';
-    const statusBadge = `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:${st.bg};color:${st.color}">${st.icon} ${st.label}</span>`;
-    const tipoBadge = log.tipo === 'criar'
-      ? `<span style="font-size:10px;background:#E8F5E9;color:var(--ve);padding:2px 6px;border-radius:4px">CRIAR</span>`
-      : `<span style="font-size:10px;background:#EEF4FF;color:var(--az);padding:2px 6px;border-radius:4px">SIM</span>`;
-    const detalhe = st.detalhe
-      ? `<br><span style="font-size:11px;color:var(--vm)">${st.detalhe.substring(0,80)}</span>`
-      : '';
-    return `<tr>
-      <td style="white-space:nowrap">${data}<br><span style="font-size:11px;color:var(--c4)">${hora}</span></td>
-      <td>${tipoBadge}</td>
-      <td style="font-size:13px">${r.familia || r.variacao || '—'}</td>
-      <td style="font-size:13px">${r.variacao || '—'}</td>
-      <td>${mlbLink}</td>
-      <td style="font-size:12px;color:var(--c5)">${r.conta || '—'}</td>
-      <td>${statusBadge}${detalhe}</td>
-    </tr>`;
-  }).join('');
-
-  cont.innerHTML = `<div class="htable">
-    <table>
-      <thead><tr>
-        <th>Data/Hora</th><th>Tipo</th><th>Família</th><th>Variação</th><th>MLB</th><th>Conta</th><th>Status</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-  </div>`;
-}
-
-// Hook nav to render registros when section opens
-const _navOrigReg = window.nav;
-window.nav = function(id, el) {
-  _navOrigReg(id, el);
-  if(id === 'historico') { filtrarRegistros(_filtroAtivo || 'todos'); }
-  if(id === 'logs') renderizarLogs();
-  if(id === 'dashboard') atualizarDashboard();
-};
-
-// ═══════════════════════════════════════════════════════════
-// AUTO-SAVE — salva dados da tabela no localStorage a cada 30s
-// ═══════════════════════════════════════════════════════════
-const SAVE_KEY = 'meli_panel_rascunho';
-
-function salvarRascunho() {
-  try {
-    const rows = Array.from(document.querySelectorAll('#tbody tr'));
-    const dados = rows.map(tr => {
-      const id = tr.id.replace('ln','');
-      const get = fld => document.getElementById(fld+id)?.value||'';
-      return {fam:get('fam'),famid:get('famid'),var:get('var'),preco:get('preco'),
-              est:get('est'),ean:get('ean'),sku:get('sku'),peso:get('peso'),
-              alt:get('alt'),lar:get('lar'),comp:get('comp')};
-    }).filter(r=>r.fam||r.var||r.preco);
-    if(dados.length>0){
-      localStorage.setItem(SAVE_KEY, JSON.stringify({dados, ts:Date.now()}));
-    }
-  } catch(e){}
-}
-
-function restaurarRascunho() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if(!raw) return;
-    const {dados, ts} = JSON.parse(raw);
-    // só restaura se tiver menos de 24h
-    if(Date.now()-ts > 86400000) { localStorage.removeItem(SAVE_KEY); return; }
-    if(!dados||!dados.length) return;
-
-    // Limpa linhas vazias existentes
-    document.getElementById('tbody').innerHTML='';
-    linhaId=0;
-
-    dados.forEach(r => {
-      addLinha();
-      const id = linhaId;
-      const set = (fld,val) => { const el=document.getElementById(fld+id); if(el) el.value=val||''; };
-      set('fam',r.fam); set('famid',r.famid); set('var',r.var); set('preco',r.preco);
-      set('est',r.est); set('ean',r.ean); set('sku',r.sku); set('peso',r.peso);
-      set('alt',r.alt); set('lar',r.lar); set('comp',r.comp);
-    });
-    atualizarTabelaFotoRefs();
-
-    const mins = Math.round((Date.now()-ts)/60000);
-    const aviso = document.createElement('div');
-    aviso.innerHTML = `<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:13px;color:#F57F17;display:flex;align-items:center;justify-content:space-between">
-      <span>💾 Rascunho restaurado (salvo há ${mins < 60 ? mins+'min' : Math.round(mins/60)+'h'}) — ${dados.length} linha(s)</span>
-      <button onclick="localStorage.removeItem('${SAVE_KEY}');this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#F57F17">✕</button>
-    </div>`;
-    const card = document.querySelector('#sec-variacoes .card:last-of-type');
-    if(card) card.parentElement.insertBefore(aviso.firstElementChild, card);
-  } catch(e){}
-}
-
-// Salva automaticamente a cada 30s e em qualquer input da tabela
-setInterval(salvarRascunho, 30000);
-document.addEventListener('input', e => {
-  if(e.target.closest('#tbody')) salvarRascunho();
-});
-
-// Limpa rascunho quando criar com sucesso
-const _execOrig = window.executar;
-window.executar = async function() {
-  await _execOrig.apply(this, arguments);
-  // limpa após 3s (tempo de ver o resultado)
-  setTimeout(()=>localStorage.removeItem(SAVE_KEY), 3000);
-};
-
-// ═══════════════════════════════════════════════════════════
-// TOKEN AUTO-RENOVAÇÃO — verifica a cada 30min, avisa quando
-// falta < 30min e tenta auto-renovar via refresh_token
-// ═══════════════════════════════════════════════════════════
-async function verificarEAtualizarTokens() {
+// ════════════════════════════════════════════════════════
+// TOKEN MELI
+// ════════════════════════════════════════════════════════
+async function carregarStatusTokens() {
   try {
     const r = await fetch(API + '/api/tokens/status');
     const d = await r.json();
-    window._tokenStatus = d;
-
-    const contas = [
-      {id:'conta1', nome:'Conta 1 — JA Comercial'},
-      {id:'conta2', nome:'Conta 2 — Universal Vendas'}
-    ];
-
-    for(const conta of contas) {
-      const info = d[conta.id];
-      if(!info) continue;
-      const minsLeft = info.minutos_restantes;
-
-      if(minsLeft !== undefined && minsLeft < 30 && minsLeft > 0) {
-        // Tenta auto-renovar usando refresh_token do backend
-        try {
-          const rr = await fetch(API + '/api/tokens/auto-renovar', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({conta: conta.id})
-          });
-          const rd = await rr.json();
-          if(rd.ok) {
-            toast(`Token ${conta.nome} renovado automaticamente ✓`, 'ok');
-            continue;
-          }
-        } catch(e){}
-        // Se não conseguiu auto-renovar, avisa
-        toast(`⚠ Token ${conta.nome} expira em ${minsLeft}min — renove na aba Token MELI`, 'err');
-      } else if(minsLeft !== undefined && minsLeft <= 0) {
-        toast(`⚠ Token ${conta.nome} expirado — acesse Token MELI para renovar`, 'err');
-      }
-    }
-  } catch(e){}
-}
-
-// Verifica a cada 30 minutos
-setInterval(verificarEAtualizarTokens, 30 * 60 * 1000);
-
-
-</script>
-
-<script>
-// ── API BASE (auto-detecta produção vs local) ───────────────────────────
-const API = location.hostname === 'localhost' ? 'http://localhost:5000' : '';
-
-// ── Substituições das funções mockadas ─────────────────────────────────
-
-// LOGIN (mock local - API login removido pois senha não bate no Render)
-// A função mock do primeiro script já funciona corretamente
-
-// Status dos tokens
-// APP IDs MELI (para OAuth)
-const MELI_APP_IDS = {conta1: '2598166159105156', conta2: '2598166159105156'};
-
-function abrirAutorizacaoMeli(contaId) {
-  const appId = MELI_APP_IDS[contaId] || '2598166159105156';
-  const url = 'https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=' + appId;
-  window.open(url, '_blank');
-  toast('Autorize no MELI e copie o codigo TG-xxx da URL', 'ok');
-}
-
-async function carregarStatusTokens(showToast) {
-  try {
-    const r = await fetch(API + '/api/tokens/status');
-    const d = await r.json();
-    window._tokenStatus = d;
-    // Update UI for each conta
-    ['conta1','conta2'].forEach(c => {
+    ['conta1','conta2'].forEach((c,i) => {
       const info = d[c];
-      if(!info) return;
-      const badge = document.getElementById('badge-'+c);
-      const statusEl = document.getElementById('status-'+c);
-      const expiraEl = document.getElementById('expira-'+c);
-      const restanteEl = document.getElementById('restante-'+c);
-      const card = document.getElementById('card-token-'+c);
-      if(info.valido) {
-        if(badge) { badge.textContent='✓ Válido'; badge.className='badge bok'; }
-        if(statusEl) { statusEl.textContent='● Válido'; statusEl.className='sv vd'; }
-        if(card) card.style.borderLeft='3px solid var(--ve)';
-        const mins = info.minutos_restantes || 0;
-        const h = Math.floor(mins/60), m = mins%60;
-        if(restanteEl) restanteEl.textContent = h+'h '+m+'m';
-        if(expiraEl) expiraEl.textContent = info.expira_em ? 'Expira às '+info.expira_em : '';
+      const el = document.getElementById('t'+(i+1)+'-status');
+      if(!el) return;
+      if(!info||!info.valido) {
+        el.innerHTML = '<span style="color:var(--vm);font-size:13px">✗ Não configurado ou expirado</span>';
       } else {
-        if(badge) { badge.textContent='✗ '+( info.motivo||'Não configurado'); badge.className='badge berr'; }
-        if(statusEl) { statusEl.textContent='● '+(info.motivo||'Não configurado'); statusEl.className='sv vm'; }
-        if(restanteEl) restanteEl.textContent = '—';
-        if(expiraEl) expiraEl.textContent = '';
-        if(card) card.style.borderLeft='3px solid var(--vm)';
+        const min = info.minutos_restantes;
+        const cor = min < 30 ? 'var(--vm)' : 'var(--ve)';
+        el.innerHTML = '<span style="color:'+cor+';font-size:13px">✓ Válido — '+Math.round(min/60)+'h '+( min%60)+'min restantes</span>';
       }
     });
-    if(showToast) toast('Status atualizado','ok');
-  } catch(e) {
-    if(showToast) toast('Erro ao verificar tokens','err');
-  }
+  } catch(e){}
 }
 
-// Renovar token
+function abrirAuth(n) {
+  const appId = n===1 ? '2598166159105156' : '';
+  const url = 'https://auth.mercadolivre.com.br/authorization?response_type=code&client_id='+appId+'&redirect_uri=https://meli-panel.onrender.com/callback';
+  window.open(url,'_blank');
+}
+
 async function renovarToken(contaId) {
-  const codigo = document.getElementById('cod-' + contaId)?.value?.trim();
-  if (!codigo) { toast('Cole o código antes de renovar', 'err'); return; }
+  const n = contaId==='conta1' ? 1 : 2;
+  const codigo = document.getElementById('cod-'+contaId)?.value?.trim();
+  if(!codigo) { toast('Cole o código antes de renovar','err'); return; }
+  showLoading('Renovando token...');
   try {
     const r = await fetch(API + '/api/tokens/renovar', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({conta: contaId, codigo})
     });
     const d = await r.json();
-    if (d.ok) { toast('Token renovado com sucesso!', 'ok'); carregarStatusTokens(); }
-    else toast('Erro: ' + d.erro, 'err');
-  } catch(e) { toast('Erro de conexão', 'err'); }
+    hideLoading();
+    if(d.ok) { toast('Token Conta '+n+' renovado com sucesso!','ok'); carregarStatusTokens(); }
+    else toast('Erro: '+(d.erro||'desconhecido'),'err');
+  } catch(e) { hideLoading(); toast('Erro de conexão','err'); }
 }
 
-// Upload de foto para o MELI (retorna picture_id)
-async function uploadFotoMeli(file, contaId) {
-  const fd = new FormData();
-  fd.append('foto', file);
-  fd.append('conta', contaId);
-  const r = await fetch(API + '/api/fotos/upload', {method:'POST', body:fd});
-  const d = await r.json();
-  if (!d.ok) throw new Error(d.erro);
-  return d.picture_id;
-}
+// Verificar tokens a cada 30 min
+setInterval(async () => {
+  try {
+    const r = await fetch(API + '/api/tokens/status');
+    const d = await r.json();
+    const cs = contasSel();
+    cs.forEach(c => {
+      const info = d[c];
+      if(info && info.valido && info.minutos_restantes < 30) {
+        toast('⚠ Token '+c+' expira em '+info.minutos_restantes+'min — acesse Token MELI','err');
+      }
+    });
+  } catch(e){}
+}, 30*60*1000);
 
-// SIMULAR real
+// ════════════════════════════════════════════════════════
+// SIMULAR
+// ════════════════════════════════════════════════════════
 async function simular() {
   const dados = getLinhas();
-  if (!dados.length) { toast('Preencha ao menos uma linha completa', 'err'); return; }
+  if(!dados.length) { toast('Preencha ao menos uma linha completa','err'); return; }
   const cs = contasSel();
-  if (!cs.length) { toast('Selecione ao menos uma conta', 'err'); return; }
+  if(!cs.length) { toast('Selecione ao menos uma conta','err'); return; }
+
+  // Salvar registro antes
+  const regId = 'reg_'+Date.now();
+  const regPre = {
+    id:regId, ts:new Date().toISOString(), tipo:'simular', status:'simulado',
+    contas:cs, dadosOriginais: dados.map(d=>({...d})),
+    resumo: dados.length+' var. (simulação) em '+cs.join(', '),
+    resultados: dados.flatMap(d => cs.map(c => ({conta:c, variacao:d.variacao, status:'processando', ok:null})))
+  };
+  salvarRegistroItem(regPre);
 
   showLoading('Simulando variações...');
-  const payload = montarPayload(dados, cs, true);
+  const payload = montarPayload(dados, cs, true, {});
   try {
     const r = await fetch(API + '/api/variacoes/criar', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -1473,399 +1176,159 @@ async function simular() {
     });
     const d = await r.json();
     hideLoading();
+    const resultados = (d.resultados||[]).map(r => ({...r, status:r.ok?'simulado':'erro'}));
+    atualizarRegistroItem(regId, 'simulado', resultados);
     exibirResultado(d.resultados, true);
-    toast('Simulação concluída!', 'ok');
-  } catch(e) { hideLoading(); toast('Erro: ' + e.message, 'err'); }
+    toast('Simulação concluída!','ok');
+  } catch(e) {
+    hideLoading();
+    atualizarRegistroItem(regId, 'erro', [{erro:'Erro de conexão: '+e.message}]);
+    toast('Erro: '+e.message,'err');
+  }
 }
 
-// EXECUTAR real
+// ════════════════════════════════════════════════════════
+// EXECUTAR — SALVA ANTES, TENTA, ATUALIZA
+// ════════════════════════════════════════════════════════
 async function executar() {
   const dados = getLinhas();
-  if (!dados.length) { toast('Preencha ao menos uma linha', 'err'); return; }
+  if(!dados.length) { toast('Preencha ao menos uma linha','err'); return; }
   const cs = contasSel();
-  if (!cs.length) { toast('Selecione ao menos uma conta', 'err'); return; }
-  const semFoto = dados.filter(d => !getFotoParaVariacao(d.variacao));
-  if (semFoto.length && !window._confirmarSemFoto) {
-    const nomes = semFoto.map(d=>d.variacao).join(', ');
-    if(!confirm('⚠ ' + semFoto.length + ' variação(ões) sem fotos:\n' + nomes + '\n\nDeseja criar assim mesmo (sem fotos)?')) return;
-    window._confirmarSemFoto = true;
-  }
-  window._confirmarSemFoto = false;
+  if(!cs.length) { toast('Selecione ao menos uma conta','err'); return; }
 
-  // Verificar se tokens estão configurados antes de tentar
-  try {
-    const tr = await fetch(API + '/api/tokens/status');
-    const td = await tr.json();
-    const tokensFaltando = cs.filter(c => {
-      const info = td[c];
-      return !info || !info.valido;
-    });
-    if(tokensFaltando.length > 0) {
-      document.getElementById('resultado').innerHTML = `
-        <div class="res-warn" style="margin-top:16px">
-          ⚠ Token não configurado para: ${tokensFaltando.join(', ')}<br>
-          <a href="#" onclick="nav('token',document.querySelectorAll('.ni')[4])" 
-             style="color:var(--az);font-weight:600">→ Clique aqui para configurar o Token MELI</a>
-        </div>`;
-      toast('Configure o Token MELI antes de criar', 'err');
+  // PASSO 1: SALVAR IMEDIATAMENTE antes de qualquer coisa
+  const regId  = 'reg_'+Date.now();
+  const regPre = {
+    id: regId,
+    ts: new Date().toISOString(),
+    tipo: 'criar',
+    status: 'processando',
+    contas: cs,
+    dadosOriginais: dados.map(d => ({...d})),
+    resumo: dados.length+' var. em '+cs.join(', '),
+    resultados: dados.flatMap(d => cs.map(c => ({conta:c, variacao:d.variacao, familia:d.fam, status:'processando', ok:null, erro:null})))
+  };
+  salvarRegistroItem(regPre);
+  toast('Dados salvos — iniciando criação...','ok');
+
+  // Verificar fotos
+  const semFoto = dados.filter(d => !getFotoParaVariacao(d.variacao));
+  if(semFoto.length) {
+    const nomes = semFoto.map(d=>d.variacao).join(', ');
+    if(!confirm('⚠ '+semFoto.length+' variação(ões) sem fotos:\n'+nomes+'\n\nDeseja criar assim mesmo?')) {
+      atualizarRegistroItem(regId,'cancelado',[{erro:'Cancelado pelo usuário'}]);
       return;
     }
-  } catch(e) { /* se o endpoint não existir, continua */ }
+  }
 
   showLoading('Fazendo upload das fotos...');
-  toast('Fazendo upload das fotos...', 'ok');
 
-  // Upload das fotos únicas para cada variação em cada conta
+  // Upload de fotos
   const fotosComIds = {};
-  for (const varNome of [...new Set(dados.map(d=>d.variacao))]) {
+  for(const varNome of [...new Set(dados.map(d=>d.variacao))]) {
     const banco = getFotoParaVariacao(varNome);
-    if (!banco || banco.modo !== 'upload') continue;
-    fotosComIds[varNome] = {picture_ids: []};
-    for (const contaId of cs) {
+    if(!banco||banco.modo!=='upload') continue;
+    fotosComIds[varNome] = {};
+    for(const contaId of cs) {
       fotosComIds[varNome][contaId] = [];
-      for (const file of banco.files) {
+      for(const file of banco.files) {
         try {
-          const pid = await uploadFotoMeli(file, contaId);
-          fotosComIds[varNome][contaId].push(pid);
-        } catch(e) { toast('Erro no upload: ' + e.message, 'err'); return; }
+          const fd = new FormData(); fd.append('foto',file); fd.append('conta',contaId);
+          const rr = await fetch(API+'/api/fotos/upload',{method:'POST',body:fd});
+          const dd = await rr.json();
+          if(!dd.ok) throw new Error(dd.erro||'upload failed');
+          fotosComIds[varNome][contaId].push(dd.picture_id);
+        } catch(e) {
+          hideLoading();
+          atualizarRegistroItem(regId,'erro',[{erro:'Upload falhou: '+e.message}]);
+          toast('Erro no upload: '+e.message,'err');
+          return;
+        }
       }
     }
   }
 
-  toast('Criando variações...', 'ok');
+  showLoading('Criando variações...');
   const payload = montarPayload(dados, cs, false, fotosComIds);
 
   try {
-    const r = await fetch(API + '/api/variacoes/criar', {
+    const r = await fetch(API+'/api/variacoes/criar', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
     const d = await r.json();
-    exibirResultado(d.resultados, false);
-    const ok = d.resultados.filter(r=>r.ok).length;
-    const err = d.resultados.filter(r=>!r.ok).length;
     hideLoading();
-    toast(ok + ' criadas' + (err?' | '+err+' erros':'') + ' ✓', ok>0?'ok':'err');
-  } catch(e) { hideLoading(); toast('Erro: ' + e.message, 'err'); }
+
+    const resultados = (d.resultados||[]).map(r => ({
+      conta:r.conta, variacao:r.variacao, familia:r.familia||'',
+      ok:r.ok, erro:r.erro||null, mlb_criado:r.mlb_criado||null,
+      dry_run:r.dry_run||false, payload_resumo:r.payload_resumo||null,
+      cause:r.cause||[],
+      status: r.ok ? 'criado' : 'erro'
+    }));
+    const nOk  = resultados.filter(r=>r.ok).length;
+    const nErr = resultados.filter(r=>!r.ok).length;
+    atualizarRegistroItem(regId, nErr===0?'concluido':'parcial', resultados);
+    exibirResultado(d.resultados, false);
+    toast(nOk+' criadas'+(nErr?' | '+nErr+' erro(s)':'')+' ✓', nOk>0?'ok':'err');
+    if(nErr===0) setTimeout(()=>localStorage.removeItem(SAVE_KEY), 2000);
+  } catch(e) {
+    hideLoading();
+    atualizarRegistroItem(regId,'erro',[{erro:'Erro de conexão: '+e.message}]);
+    toast('Erro: '+e.message,'err');
+  }
 }
 
-function montarPayload(dados, cs, dry_run, fotosComIds={}) {
+function montarPayload(dados, cs, dry_run, fotosComIds) {
   const fotos_banco = {};
-  for (const d of dados) {
+  for(const d of dados) {
     const banco = getFotoParaVariacao(d.variacao);
-    if (!banco) continue;
-    if (banco.modo === 'onedrive' || banco.modo === 'pasta') {
-      fotos_banco[d.variacao] = {tipo: banco.modo, valor: banco.valor, picture_ids: []};
-    } else if (fotosComIds[d.variacao]) {
-      fotos_banco[d.variacao] = {tipo:'upload', picture_ids: []};
+    if(!banco) continue;
+    if(banco.modo==='onedrive'||banco.modo==='pasta') {
+      fotos_banco[d.variacao] = {tipo:banco.modo, valor:banco.valor, picture_ids:[]};
+    } else if(fotosComIds[d.variacao]) {
+      fotos_banco[d.variacao] = {tipo:'upload', picture_ids:[]};
     }
   }
   return {
-    contas: cs,
+    contas: cs, dry_run,
     linhas: dados.map(d => ({
-      familia_id: d.familia_id || d.fam,
-      variacao: d.variacao,
-      preco: parseFloat(d.preco),
-      estoque: parseInt(d.est||0),
-      sku: d.sku||'',
-      ean: d.ean||'',
-      peso_g: d.peso_g||null,
-      altura_cm: d.alt||null,
-      largura_cm: d.lar||null,
-      comprimento_cm: d.comp||null,
+      familia_id: d.familia_id||d.fam,
+      variacao: d.variacao, preco: parseFloat(d.preco),
+      estoque: parseInt(d.est||0), sku: d.sku||'', ean: d.ean||'',
+      peso_g: d.peso||null, altura_cm: d.alt||null,
+      largura_cm: d.lar||null, comprimento_cm: d.comp||null,
     })),
     fotos_banco,
-    dry_run,
   };
 }
 
 function exibirResultado(resultados, isDryRun) {
-  const ok = resultados.filter(r=>r.ok);
-  const err = resultados.filter(r=>!r.ok);
-  const linhas = resultados.map(r=>{
-    if(r.dry_run) return `• [SIM] ${r.conta} | ${r.variacao} → ${r.payload_resumo}`;
-    if(r.ok) return `• ✓ ${r.conta} | ${r.variacao} → <strong>${r.mlb_criado}</strong>`;
-    const erroMsg = r.erro && r.erro.includes('Token') 
-      ? `${r.erro} — <a href="#" onclick="nav('token',document.querySelectorAll('.ni')[4])" style="color:var(--az);text-decoration:underline">Renove o token aqui</a>`
-      : (r.erro || 'Erro desconhecido');
-    return `• ✗ ${r.conta} | ${r.variacao} → ${erroMsg}`;
+  const ok  = (resultados||[]).filter(r=>r.ok);
+  const err = (resultados||[]).filter(r=>!r.ok);
+  const linhas = (resultados||[]).map(r => {
+    if(r.dry_run) return '• [SIM] '+r.conta+' | '+r.variacao+' → '+(r.payload_resumo||'ok');
+    if(r.ok) return '• ✓ '+r.conta+' | '+r.variacao+' → <strong>'+(r.mlb_criado||'OK')+'</strong>';
+    const erroMsg = (r.erro||'Erro desconhecido').substring(0,120);
+    return '• ✗ '+r.conta+' | '+r.variacao+' → '+erroMsg;
   }).join('<br>');
-  document.getElementById('resultado').innerHTML = `
-    <div class="res-ok" style="margin-top:16px">
-      <h4>${isDryRun?'Simulação':'Execução'} concluída — ${ok.length} OK, ${err.length} erro(s)</h4>
-      <p>${linhas}</p>
-    </div>`;
-
-  // Registrar no log
-  const contasUsadas = [...new Set(resultados.map(r=>r.conta))].join(', ');
-  const variacoes = [...new Set(resultados.map(r=>r.variacao))].join(', ');
-  adicionarLog(isDryRun?'simular':'criar', {
-    resumo: `${resultados.length} variação(ões) em ${contasUsadas} — ${variacoes}`,
-    resultados: resultados.map(r => ({...r}))
-  });
+  document.getElementById('resultado').innerHTML =
+    '<div class="res-ok" style="margin-top:16px">' +
+      '<h4>'+(isDryRun?'Simulação':'Execução')+' concluída — '+ok.length+' OK, '+err.length+' erro(s)</h4>' +
+      '<p>'+linhas+'</p>' +
+    '</div>';
 }
 
-// Substituir getLinhas para incluir familia_id
-const _getLinhasOrig = window.getLinhas;
-window.getLinhas = function() {
-  return Array.from(document.querySelectorAll('#tbody tr')).reduce((acc,tr)=>{
-    const id=tr.id.replace('ln','');
-    const fam=document.getElementById('fam'+id)?.value.trim();
-    const famid=document.getElementById('famid'+id)?.value.trim();
-    const v=document.getElementById('var'+id)?.value.trim();
-    const p=document.getElementById('preco'+id)?.value;
-    if(!fam||!v||!p)return acc;
-    const b=getFotoParaVariacao(v);
-    let fotoInfo=b?(b.modo==='onedrive'?'☁ OneDrive':b.modo==='pasta'?'📁 Pasta':b.files.length+' foto(s)'):'⚠ sem fotos';
-    acc.push({
-      fam, familia_id: famid||fam, variacao:v,
-      preco:Number(p).toFixed(2),
-      est:document.getElementById('est'+id)?.value||'0',
-      ean:document.getElementById('ean'+id)?.value||'',
-      sku:document.getElementById('sku'+id)?.value||'',
-      peso_g:document.getElementById('peso'+id)?.value||null,
-      alt:document.getElementById('alt'+id)?.value||null,
-      lar:document.getElementById('lar'+id)?.value||null,
-      comp:document.getElementById('comp'+id)?.value||null,
-      fotoInfo, temFoto:!!b
-    });
-    return acc;
-  },[]);
-};
+// ════════════════════════════════════════════════════════
+// INICIALIZAÇÃO
+// ════════════════════════════════════════════════════════
+document.getElementById('btn-login').addEventListener('click', login);
+document.getElementById('is').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
 
-function contasSel(){return[contas.c1&&'conta1',contas.c2&&'conta2'].filter(Boolean);}
-
-document.getElementById('is')?.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-
-
-// ═══════════════════════════════════════════════════════════
-// LOGS — registro persistente de cada chamada à API MELI
-// ═══════════════════════════════════════════════════════════
-const LOGS_KEY = 'meli_panel_logs';
-const MAX_LOGS = 200;
-
-function adicionarLog(tipo, dados) {
-  try {
-    const logs = carregarLogs();
-    logs.unshift({
-      id: Date.now(),
-      ts: new Date().toISOString(),
-      tipo, // 'criar'|'simular'|'token'|'erro'
-      ...dados
-    });
-    if(logs.length > MAX_LOGS) logs.splice(MAX_LOGS);
-    localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
-    if(document.getElementById('sec-logs')?.classList.contains('ativa')) renderizarLogs();
-  } catch(e){}
+// Tentar restaurar sessão automaticamente
+if(!tentarRestaurarSessao()) {
+  document.getElementById('tela-login').style.display = 'flex';
 }
-
-function carregarLogs() {
-  try { return JSON.parse(localStorage.getItem(LOGS_KEY)||'[]'); } catch(e){ return []; }
-}
-
-function limparLogs() {
-  localStorage.removeItem(LOGS_KEY);
-  renderizarLogs();
-  toast('Logs limpos','ok');
-}
-
-function exportarLogs() {
-  const logs = carregarLogs();
-  const sep = '\n─────────────────────────────\n';
-  const txt = logs.map(l => {
-    const linhas = (l.resultados||[]).map(r =>
-      '  ' + (r.ok?'OK':'ERR') + ' ' + (r.conta||'') + ' | ' + (r.variacao||'') + ' -> ' + (r.ok?(r.mlb_criado||'OK'):(r.erro||'erro'))
-    ).join('\n');
-    return '[' + l.ts + '] ' + l.tipo.toUpperCase() + ' - ' + (l.resumo||'') + '\n' + linhas;
-  }).join(sep);
-  const a = document.createElement('a');
-  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
-  a.download = 'meli-logs-' + new Date().toISOString().slice(0,10) + '.txt';
-  a.click();
-}
-
-function renderizarLogs() {
-  const cont = document.getElementById('logs-container');
-  if(!cont) return;
-  const logs = carregarLogs();
-  if(!logs.length) {
-    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum log ainda. Os logs aparecem aqui após criar ou simular variações.</div>';
-    return;
-  }
-  cont.innerHTML = logs.map(l => {
-    const ts = new Date(l.ts).toLocaleString('pt-BR');
-    const ok = (l.resultados||[]).filter(r=>r.ok).length;
-    const err = (l.resultados||[]).filter(r=>!r.ok).length;
-    const tipoColor = l.tipo==='criar'?'var(--ve)':l.tipo==='simular'?'var(--az)':'var(--vm)';
-    const badge = `<span class="badge" style="background:${tipoColor}20;color:${tipoColor}">${l.tipo.toUpperCase()}</span>`;
-    const linhas = (l.resultados||[]).map(r => {
-      if(r.dry_run) return `<div style="padding:4px 0;font-size:12px;color:var(--c5)">• [SIM] <b>${r.conta}</b> | ${r.variacao} → ${r.payload_resumo||'ok'}</div>`;
-      if(r.ok) return `<div style="padding:4px 0;font-size:12px;color:var(--ve)">• ✓ <b>${r.conta}</b> | ${r.variacao} → <a href="https://www.mercadolivre.com.br/anuncios/${r.mlb_criado}" target="_blank" style="color:var(--az)">${r.mlb_criado}</a></div>`;
-      return `<div style="padding:4px 0;font-size:12px;color:var(--vm)">• ✗ <b>${r.conta}</b> | ${r.variacao} → ${r.erro||'erro desconhecido'}${r.cause&&r.cause.length?'<br><span style="font-size:11px;color:var(--c4)">Causa: '+JSON.stringify(r.cause)+'</span>':''}</div>`;
-    }).join('');
-    return `<div class="card" style="margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        ${badge}
-        <span style="font-size:12px;color:var(--c4)">${ts}</span>
-        <span style="font-size:12px;color:var(--c5);flex:1">${l.resumo||''}</span>
-        <span class="badge ${ok>0?'bok':'berr'}">${ok} OK${err>0?' / '+err+' erro(s)':''}</span>
-      </div>
-      ${linhas||'<span style="font-size:12px;color:var(--c4)">Sem detalhes</span>'}
-    </div>`;
-  }).join('');
-}
-
-// ── Dashboard: atualizar stats ──
-async function atualizarDashboard() {
-  const btn = document.getElementById('btn-refresh-dash');
-  if(btn) { btn.textContent='↻ Atualizando...'; btn.disabled=true; }
-  try {
-    await verificarEAtualizarTokens();
-    // Re-render dashboard stats from logs
-    const logs = carregarLogs().filter(l=>l.tipo==='criar');
-    const hoje = new Date().toLocaleDateString('pt-BR');
-    const todayLogs = logs.filter(l=>new Date(l.ts).toLocaleDateString('pt-BR')===hoje);
-    const okHoje = todayLogs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
-    const errTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>!r.ok).length;
-    const okTotal = logs.flatMap(l=>l.resultados||[]).filter(r=>r.ok).length;
-    // Update stat cards if they exist
-    const cards = document.querySelectorAll('#sec-dashboard .sv');
-    if(cards.length >= 4) {
-      cards[0].textContent = okHoje;
-      cards[2].textContent = okTotal;
-      cards[3].textContent = errTotal;
-    }
-    toast('Dashboard atualizado','ok');
-  } catch(e){ toast('Erro ao atualizar','err'); }
-  if(btn) { btn.textContent='↻ Atualizar'; btn.disabled=false; }
-}
-
-// Expose renderizarLogs to nav
-const _navOrig = window.nav;
-window.nav = function(id, el) {
-  _navOrig(id, el);
-  if(id==='logs') renderizarLogs();
-  if(id==='dashboard') atualizarDashboard();
-  if(id==='token') carregarStatusTokens(false);
-};
-
-// ═══════════════════════════════════════════════════════════
-// AUTO-SAVE — salva dados da tabela no localStorage a cada 30s
-// ═══════════════════════════════════════════════════════════
-const SAVE_KEY = 'meli_panel_rascunho';
-
-function salvarRascunho() {
-  try {
-    const rows = Array.from(document.querySelectorAll('#tbody tr'));
-    const dados = rows.map(tr => {
-      const id = tr.id.replace('ln','');
-      const get = fld => document.getElementById(fld+id)?.value||'';
-      return {fam:get('fam'),famid:get('famid'),var:get('var'),preco:get('preco'),
-              est:get('est'),ean:get('ean'),sku:get('sku'),peso:get('peso'),
-              alt:get('alt'),lar:get('lar'),comp:get('comp')};
-    }).filter(r=>r.fam||r.var||r.preco);
-    if(dados.length>0){
-      localStorage.setItem(SAVE_KEY, JSON.stringify({dados, ts:Date.now()}));
-    }
-  } catch(e){}
-}
-
-function restaurarRascunho() {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if(!raw) return;
-    const {dados, ts} = JSON.parse(raw);
-    // só restaura se tiver menos de 24h
-    if(Date.now()-ts > 86400000) { localStorage.removeItem(SAVE_KEY); return; }
-    if(!dados||!dados.length) return;
-
-    // Limpa linhas vazias existentes
-    document.getElementById('tbody').innerHTML='';
-    linhaId=0;
-
-    dados.forEach(r => {
-      addLinha();
-      const id = linhaId;
-      const set = (fld,val) => { const el=document.getElementById(fld+id); if(el) el.value=val||''; };
-      set('fam',r.fam); set('famid',r.famid); set('var',r.var); set('preco',r.preco);
-      set('est',r.est); set('ean',r.ean); set('sku',r.sku); set('peso',r.peso);
-      set('alt',r.alt); set('lar',r.lar); set('comp',r.comp);
-    });
-    atualizarTabelaFotoRefs();
-
-    const mins = Math.round((Date.now()-ts)/60000);
-    const aviso = document.createElement('div');
-    aviso.innerHTML = `<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:13px;color:#F57F17;display:flex;align-items:center;justify-content:space-between">
-      <span>💾 Rascunho restaurado (salvo há ${mins < 60 ? mins+'min' : Math.round(mins/60)+'h'}) — ${dados.length} linha(s)</span>
-      <button onclick="localStorage.removeItem('${SAVE_KEY}');this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#F57F17">✕</button>
-    </div>`;
-    const card = document.querySelector('#sec-variacoes .card:last-of-type');
-    if(card) card.parentElement.insertBefore(aviso.firstElementChild, card);
-  } catch(e){}
-}
-
-// Salva automaticamente a cada 30s e em qualquer input da tabela
-setInterval(salvarRascunho, 30000);
-document.addEventListener('input', e => {
-  if(e.target.closest('#tbody')) salvarRascunho();
-});
-
-// Limpa rascunho quando criar com sucesso
-const _execOrig = window.executar;
-window.executar = async function() {
-  await _execOrig.apply(this, arguments);
-  // limpa após 3s (tempo de ver o resultado)
-  setTimeout(()=>localStorage.removeItem(SAVE_KEY), 3000);
-};
-
-// ═══════════════════════════════════════════════════════════
-// TOKEN AUTO-RENOVAÇÃO — verifica a cada 30min, avisa quando
-// falta < 30min e tenta auto-renovar via refresh_token
-// ═══════════════════════════════════════════════════════════
-async function verificarEAtualizarTokens() {
-  try {
-    const r = await fetch(API + '/api/tokens/status');
-    const d = await r.json();
-    window._tokenStatus = d;
-
-    const contas = [
-      {id:'conta1', nome:'Conta 1 — JA Comercial'},
-      {id:'conta2', nome:'Conta 2 — Universal Vendas'}
-    ];
-
-    for(const conta of contas) {
-      const info = d[conta.id];
-      if(!info) continue;
-      const minsLeft = info.minutos_restantes;
-
-      if(minsLeft !== undefined && minsLeft < 30 && minsLeft > 0) {
-        // Tenta auto-renovar usando refresh_token do backend
-        try {
-          const rr = await fetch(API + '/api/tokens/auto-renovar', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({conta: conta.id})
-          });
-          const rd = await rr.json();
-          if(rd.ok) {
-            toast(`Token ${conta.nome} renovado automaticamente ✓`, 'ok');
-            continue;
-          }
-        } catch(e){}
-        // Se não conseguiu auto-renovar, avisa
-        toast(`⚠ Token ${conta.nome} expira em ${minsLeft}min — renove na aba Token MELI`, 'err');
-      } else if(minsLeft !== undefined && minsLeft <= 0) {
-        toast(`⚠ Token ${conta.nome} expirado — acesse Token MELI para renovar`, 'err');
-      }
-    }
-  } catch(e){}
-}
-
-// Verifica a cada 30 minutos
-setInterval(verificarEAtualizarTokens, 30 * 60 * 1000);
-
-
 </script>
-
 </body>
 </html>
