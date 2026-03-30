@@ -172,10 +172,10 @@
   .cell-input::placeholder{color:var(--c4);font-size:12px}
 
   /* célula de foto na tabela — badge automático */
-  td.foto-ref-cell{min-width:130px;padding:4px 8px;vertical-align:middle}
+  td.foto-ref-cell{width:90px;max-width:90px;padding:4px 6px;vertical-align:middle}
   .foto-ref-badge{
-    display:inline-flex;align-items:center;gap:5px;
-    font-size:11px;border-radius:6px;padding:3px 8px;font-weight:500;
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:10px;border-radius:5px;padding:2px 6px;font-weight:500;white-space:nowrap;
   }
   .foto-ref-badge.ok{background:#E8F5E9;color:#2E7D32}
   .foto-ref-badge.pend{background:var(--c2);color:var(--c4)}
@@ -380,13 +380,13 @@ const FOTO_PADRAO_EMBED = {
                   <th style="min-width:130px">Variação<span class="req">*</span></th>
                   <th style="width:85px">Preço<span class="req">*</span></th>
                   <th style="width:65px">Estoque</th>
-                  <th style="width:125px">EAN</th>
+                  <th style="width:165px">EAN</th>
                   <th style="min-width:160px" class="sku-cell">SKU</th>
                   <th style="width:68px">Peso (g)</th>
                   <th style="width:64px">Alt (cm)</th>
                   <th style="width:64px">Larg (cm)</th>
                   <th style="width:68px">Comp (cm)</th>
-                  <th style="min-width:130px">Fotos</th>
+                  <th style="width:90px">Fotos</th>
                   <th style="width:64px"></th>
                 </tr>
               </thead>
@@ -483,6 +483,7 @@ function login(){
   document.getElementById('tela-login').style.display='none';
   document.getElementById('tela-app').style.display='block';
   addLinha();addLinha();addLinha();
+  setTimeout(()=>typeof restaurarRascunho==='function'&&restaurarRascunho(),300);
   // Inicializa foto padrão embarcada
   fotoPadrao = FOTO_PADRAO_EMBED;
   const fpSt = document.getElementById('fp-status');
@@ -815,7 +816,7 @@ function addLinha(){
       oninput="atualizarTabelaFotoRefs()"></td>
     <td><input class="cell-input" type="number" step="0.01" id="preco${id}" placeholder="0,00"></td>
     <td><input class="cell-input" type="number" min="0" id="est${id}" value="0"></td>
-    <td><input class="cell-input" id="ean${id}" placeholder="13 dígitos" maxlength="13"></td>
+    <td><input class="cell-input" id="ean${id}" placeholder="0000000000000" maxlength="13" style="font-family:'DM Mono',monospace;letter-spacing:1px"></td>
     <td class="sku-cell"><input class="cell-input" id="sku${id}" placeholder="SKU-001" style="min-width:155px"></td>
     <td><input class="cell-input" type="number" id="peso${id}" placeholder="g"></td>
     <td><input class="cell-input" type="number" id="alt${id}" placeholder="cm"></td>
@@ -906,6 +907,123 @@ function toast(msg,tipo){
   setTimeout(()=>t.className='toast',3500);
 }
 document.getElementById('is')?.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+
+// ═══════════════════════════════════════════════════════════
+// AUTO-SAVE — salva dados da tabela no localStorage a cada 30s
+// ═══════════════════════════════════════════════════════════
+const SAVE_KEY = 'meli_panel_rascunho';
+
+function salvarRascunho() {
+  try {
+    const rows = Array.from(document.querySelectorAll('#tbody tr'));
+    const dados = rows.map(tr => {
+      const id = tr.id.replace('ln','');
+      const get = fld => document.getElementById(fld+id)?.value||'';
+      return {fam:get('fam'),famid:get('famid'),var:get('var'),preco:get('preco'),
+              est:get('est'),ean:get('ean'),sku:get('sku'),peso:get('peso'),
+              alt:get('alt'),lar:get('lar'),comp:get('comp')};
+    }).filter(r=>r.fam||r.var||r.preco);
+    if(dados.length>0){
+      localStorage.setItem(SAVE_KEY, JSON.stringify({dados, ts:Date.now()}));
+    }
+  } catch(e){}
+}
+
+function restaurarRascunho() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return;
+    const {dados, ts} = JSON.parse(raw);
+    // só restaura se tiver menos de 24h
+    if(Date.now()-ts > 86400000) { localStorage.removeItem(SAVE_KEY); return; }
+    if(!dados||!dados.length) return;
+
+    // Limpa linhas vazias existentes
+    document.getElementById('tbody').innerHTML='';
+    linhaId=0;
+
+    dados.forEach(r => {
+      addLinha();
+      const id = linhaId;
+      const set = (fld,val) => { const el=document.getElementById(fld+id); if(el) el.value=val||''; };
+      set('fam',r.fam); set('famid',r.famid); set('var',r.var); set('preco',r.preco);
+      set('est',r.est); set('ean',r.ean); set('sku',r.sku); set('peso',r.peso);
+      set('alt',r.alt); set('lar',r.lar); set('comp',r.comp);
+    });
+    atualizarTabelaFotoRefs();
+
+    const mins = Math.round((Date.now()-ts)/60000);
+    const aviso = document.createElement('div');
+    aviso.innerHTML = `<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:13px;color:#F57F17;display:flex;align-items:center;justify-content:space-between">
+      <span>💾 Rascunho restaurado (salvo há ${mins < 60 ? mins+'min' : Math.round(mins/60)+'h'}) — ${dados.length} linha(s)</span>
+      <button onclick="localStorage.removeItem('${SAVE_KEY}');this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#F57F17">✕</button>
+    </div>`;
+    const card = document.querySelector('#sec-variacoes .card:last-of-type');
+    if(card) card.parentElement.insertBefore(aviso.firstElementChild, card);
+  } catch(e){}
+}
+
+// Salva automaticamente a cada 30s e em qualquer input da tabela
+setInterval(salvarRascunho, 30000);
+document.addEventListener('input', e => {
+  if(e.target.closest('#tbody')) salvarRascunho();
+});
+
+// Limpa rascunho quando criar com sucesso
+const _execOrig = window.executar;
+window.executar = async function() {
+  await _execOrig.apply(this, arguments);
+  // limpa após 3s (tempo de ver o resultado)
+  setTimeout(()=>localStorage.removeItem(SAVE_KEY), 3000);
+};
+
+// ═══════════════════════════════════════════════════════════
+// TOKEN AUTO-RENOVAÇÃO — verifica a cada 30min, avisa quando
+// falta < 30min e tenta auto-renovar via refresh_token
+// ═══════════════════════════════════════════════════════════
+async function verificarEAtualizarTokens() {
+  try {
+    const r = await fetch(API + '/api/tokens/status');
+    const d = await r.json();
+    window._tokenStatus = d;
+
+    const contas = [
+      {id:'conta1', nome:'Conta 1 — JA Comercial'},
+      {id:'conta2', nome:'Conta 2 — Universal Vendas'}
+    ];
+
+    for(const conta of contas) {
+      const info = d[conta.id];
+      if(!info) continue;
+      const minsLeft = info.minutos_restantes;
+
+      if(minsLeft !== undefined && minsLeft < 30 && minsLeft > 0) {
+        // Tenta auto-renovar usando refresh_token do backend
+        try {
+          const rr = await fetch(API + '/api/tokens/auto-renovar', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({conta: conta.id})
+          });
+          const rd = await rr.json();
+          if(rd.ok) {
+            toast(`Token ${conta.nome} renovado automaticamente ✓`, 'ok');
+            continue;
+          }
+        } catch(e){}
+        // Se não conseguiu auto-renovar, avisa
+        toast(`⚠ Token ${conta.nome} expira em ${minsLeft}min — renove na aba Token MELI`, 'err');
+      } else if(minsLeft !== undefined && minsLeft <= 0) {
+        toast(`⚠ Token ${conta.nome} expirado — acesse Token MELI para renovar`, 'err');
+      }
+    }
+  } catch(e){}
+}
+
+// Verifica a cada 30 minutos
+setInterval(verificarEAtualizarTokens, 30 * 60 * 1000);
+
+
 </script>
 
 <script>
@@ -1096,6 +1214,123 @@ window.getLinhas = function() {
 function contasSel(){return[contas.c1&&'conta1',contas.c2&&'conta2'].filter(Boolean);}
 
 document.getElementById('is')?.addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+
+// ═══════════════════════════════════════════════════════════
+// AUTO-SAVE — salva dados da tabela no localStorage a cada 30s
+// ═══════════════════════════════════════════════════════════
+const SAVE_KEY = 'meli_panel_rascunho';
+
+function salvarRascunho() {
+  try {
+    const rows = Array.from(document.querySelectorAll('#tbody tr'));
+    const dados = rows.map(tr => {
+      const id = tr.id.replace('ln','');
+      const get = fld => document.getElementById(fld+id)?.value||'';
+      return {fam:get('fam'),famid:get('famid'),var:get('var'),preco:get('preco'),
+              est:get('est'),ean:get('ean'),sku:get('sku'),peso:get('peso'),
+              alt:get('alt'),lar:get('lar'),comp:get('comp')};
+    }).filter(r=>r.fam||r.var||r.preco);
+    if(dados.length>0){
+      localStorage.setItem(SAVE_KEY, JSON.stringify({dados, ts:Date.now()}));
+    }
+  } catch(e){}
+}
+
+function restaurarRascunho() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(!raw) return;
+    const {dados, ts} = JSON.parse(raw);
+    // só restaura se tiver menos de 24h
+    if(Date.now()-ts > 86400000) { localStorage.removeItem(SAVE_KEY); return; }
+    if(!dados||!dados.length) return;
+
+    // Limpa linhas vazias existentes
+    document.getElementById('tbody').innerHTML='';
+    linhaId=0;
+
+    dados.forEach(r => {
+      addLinha();
+      const id = linhaId;
+      const set = (fld,val) => { const el=document.getElementById(fld+id); if(el) el.value=val||''; };
+      set('fam',r.fam); set('famid',r.famid); set('var',r.var); set('preco',r.preco);
+      set('est',r.est); set('ean',r.ean); set('sku',r.sku); set('peso',r.peso);
+      set('alt',r.alt); set('lar',r.lar); set('comp',r.comp);
+    });
+    atualizarTabelaFotoRefs();
+
+    const mins = Math.round((Date.now()-ts)/60000);
+    const aviso = document.createElement('div');
+    aviso.innerHTML = `<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:8px;padding:10px 16px;margin-bottom:12px;font-size:13px;color:#F57F17;display:flex;align-items:center;justify-content:space-between">
+      <span>💾 Rascunho restaurado (salvo há ${mins < 60 ? mins+'min' : Math.round(mins/60)+'h'}) — ${dados.length} linha(s)</span>
+      <button onclick="localStorage.removeItem('${SAVE_KEY}');this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#F57F17">✕</button>
+    </div>`;
+    const card = document.querySelector('#sec-variacoes .card:last-of-type');
+    if(card) card.parentElement.insertBefore(aviso.firstElementChild, card);
+  } catch(e){}
+}
+
+// Salva automaticamente a cada 30s e em qualquer input da tabela
+setInterval(salvarRascunho, 30000);
+document.addEventListener('input', e => {
+  if(e.target.closest('#tbody')) salvarRascunho();
+});
+
+// Limpa rascunho quando criar com sucesso
+const _execOrig = window.executar;
+window.executar = async function() {
+  await _execOrig.apply(this, arguments);
+  // limpa após 3s (tempo de ver o resultado)
+  setTimeout(()=>localStorage.removeItem(SAVE_KEY), 3000);
+};
+
+// ═══════════════════════════════════════════════════════════
+// TOKEN AUTO-RENOVAÇÃO — verifica a cada 30min, avisa quando
+// falta < 30min e tenta auto-renovar via refresh_token
+// ═══════════════════════════════════════════════════════════
+async function verificarEAtualizarTokens() {
+  try {
+    const r = await fetch(API + '/api/tokens/status');
+    const d = await r.json();
+    window._tokenStatus = d;
+
+    const contas = [
+      {id:'conta1', nome:'Conta 1 — JA Comercial'},
+      {id:'conta2', nome:'Conta 2 — Universal Vendas'}
+    ];
+
+    for(const conta of contas) {
+      const info = d[conta.id];
+      if(!info) continue;
+      const minsLeft = info.minutos_restantes;
+
+      if(minsLeft !== undefined && minsLeft < 30 && minsLeft > 0) {
+        // Tenta auto-renovar usando refresh_token do backend
+        try {
+          const rr = await fetch(API + '/api/tokens/auto-renovar', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({conta: conta.id})
+          });
+          const rd = await rr.json();
+          if(rd.ok) {
+            toast(`Token ${conta.nome} renovado automaticamente ✓`, 'ok');
+            continue;
+          }
+        } catch(e){}
+        // Se não conseguiu auto-renovar, avisa
+        toast(`⚠ Token ${conta.nome} expira em ${minsLeft}min — renove na aba Token MELI`, 'err');
+      } else if(minsLeft !== undefined && minsLeft <= 0) {
+        toast(`⚠ Token ${conta.nome} expirado — acesse Token MELI para renovar`, 'err');
+      }
+    }
+  } catch(e){}
+}
+
+// Verifica a cada 30 minutos
+setInterval(verificarEAtualizarTokens, 30 * 60 * 1000);
+
+
 </script>
 
 </body>
