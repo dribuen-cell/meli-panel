@@ -403,45 +403,97 @@ const FOTO_PADRAO_EMBED = null;
 
       <!-- HISTÓRICO -->
       <section id="sec-historico" class="sec">
-        <div class="ph"><div><h2>Histórico</h2><p>Todos os registros de criação</p></div></div>
-        <div class="htable">
-          <table>
-            <thead><tr><th>Data</th><th>Família</th><th>Variação</th><th>MLB</th><th>Preço</th><th>Conta</th><th>Fotos</th><th>Status</th><th>Quem</th></tr></thead>
-            <tbody>
-              <tr><td>27/03/2026</td><td>Kit 6 Jogo Americano</td><td>Vermelho VEC</td><td><a class="mlbl">MLB6527661104</a></td><td>R$ 69,99</td><td>Conta 1</td><td>9 fotos</td><td><span class="badge bok">✓ Criado</span></td><td>Adriana</td></tr>
-              <tr><td>27/03/2026</td><td>Kit 8 Jogo Americano</td><td>Vermelho VEC</td><td><a class="mlbl">MLB4565053097</a></td><td>R$ 78,86</td><td>Conta 1</td><td>9 fotos</td><td><span class="badge bok">✓ Criado</span></td><td>Adriana</td></tr>
-              <tr><td>27/03/2026</td><td>Kit 4 Jogo Americano</td><td>Vermelho VEC</td><td><a class="mlbl">MLB6527661338</a></td><td>R$ 44,51</td><td>Conta 1</td><td>9 fotos</td><td><span class="badge bok">✓ Criado</span></td><td>Adriana</td></tr>
-            </tbody>
-          </table>
+        <div class="ph">
+          <div><h2>Meus Registros</h2><p>Histórico de simulações e criações</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="bs" onclick="filtrarRegistros('todos')" id="filtro-todos" style="background:var(--az);color:white;border-color:var(--az)">Todos</button>
+            <button class="bs" onclick="filtrarRegistros('simular')" id="filtro-sim">Simulações</button>
+            <button class="bs" onclick="filtrarRegistros('criar')" id="filtro-criar">Criações</button>
+            <button class="bs" onclick="renderizarRegistros()" style="margin-left:4px">↻</button>
+          </div>
         </div>
+        <div id="registros-container"></div>
       </section>
 
       <!-- TOKEN -->
       <section id="sec-token" class="sec">
-        <div class="ph"><div><h2>Token MELI</h2><p>Gerencie a autenticação</p></div></div>
-        <div class="card">
-          <h3>Conta 1 — JA Comercial</h3><p class="desc">ja.comercial@gmail.com</p>
-          <div class="sgrid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-            <div class="sc"><div class="sl">Status</div><div class="sv vd" style="font-size:18px">● Válido</div><div class="ss">Expira às 02:12</div></div>
-            <div class="sc"><div class="sl">Restante</div><div class="sv" style="font-size:18px">5h 52m</div></div>
-          </div>
-          <div class="div"></div>
-          <div class="brow"><button class="bs">↗ Abrir autorização MELI</button></div>
-          <div style="margin-top:12px"><label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO</label>
-          <input type="text" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx" style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;background:var(--c1)"></div>
-          <div class="brow" style="margin-top:12px"><button class="bp" onclick="toast('Token Conta 1 renovado!','ok')">Renovar token</button></div>
+        <div class="ph"><div><h2>Token MELI</h2><p>Gerencie a autenticação das contas</p></div>
+          <button class="bs" onclick="carregarStatusTokens(true)">↻ Atualizar status</button>
         </div>
-        <div class="card">
-          <h3>Conta 2 — Universal Vendas</h3><p class="desc">universalvendas@gmail.com</p>
+
+        <div class="hint-box" style="margin-bottom:20px">
+          <span>ℹ️</span>
+          <div>
+            <strong>Como renovar o token:</strong><br>
+            1. Clique em <strong>↗ Abrir autorização MELI</strong><br>
+            2. Autorize no site do Mercado Livre<br>
+            3. Copie o código <code>TG-xxxx</code> da URL de retorno<br>
+            4. Cole no campo abaixo e clique em <strong>Renovar token</strong>
+          </div>
+        </div>
+
+        <!-- Conta 1 -->
+        <div class="card" id="card-token-conta1">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <h3>Conta 1 — JA Comercial</h3>
+            <span id="badge-conta1" class="badge" style="font-size:12px">Verificando...</span>
+          </div>
+          <p class="desc">ja.comercial@gmail.com</p>
           <div class="sgrid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-            <div class="sc"><div class="sl">Status</div><div class="sv vm" style="font-size:18px">● Expirado</div><div class="ss">Expirou às 14:30</div></div>
-            <div class="sc"><div class="sl">Restante</div><div class="sv" style="font-size:18px">—</div></div>
+            <div class="sc">
+              <div class="sl">Status</div>
+              <div class="sv" id="status-conta1" style="font-size:18px">—</div>
+              <div class="ss" id="expira-conta1"></div>
+            </div>
+            <div class="sc">
+              <div class="sl">Restante</div>
+              <div class="sv" id="restante-conta1" style="font-size:18px">—</div>
+            </div>
           </div>
           <div class="div"></div>
-          <div class="brow"><button class="bs">↗ Abrir autorização MELI</button></div>
-          <div style="margin-top:12px"><label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO</label>
-          <input type="text" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx" style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:inherit;outline:none;background:var(--c1)"></div>
-          <div class="brow" style="margin-top:12px"><button class="bp" onclick="toast('Token Conta 2 renovado!','ok')">Renovar token</button></div>
+          <div class="brow">
+            <button class="bs" onclick="abrirAutorizacaoMeli('conta1')">↗ Abrir autorização MELI</button>
+          </div>
+          <div style="margin-top:12px">
+            <label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO DA URL (TG-xxxxx...)</label>
+            <input type="text" id="cod-conta1" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx"
+              style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:'DM Mono',monospace;outline:none;background:var(--c1)">
+          </div>
+          <div class="brow" style="margin-top:12px">
+            <button class="bp" onclick="renovarToken('conta1')">✓ Renovar token Conta 1</button>
+          </div>
+        </div>
+
+        <!-- Conta 2 -->
+        <div class="card" id="card-token-conta2">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <h3>Conta 2 — Universal Vendas</h3>
+            <span id="badge-conta2" class="badge" style="font-size:12px">Verificando...</span>
+          </div>
+          <p class="desc">universalvendas@gmail.com</p>
+          <div class="sgrid" style="grid-template-columns:1fr 1fr;margin-bottom:0">
+            <div class="sc">
+              <div class="sl">Status</div>
+              <div class="sv" id="status-conta2" style="font-size:18px">—</div>
+              <div class="ss" id="expira-conta2"></div>
+            </div>
+            <div class="sc">
+              <div class="sl">Restante</div>
+              <div class="sv" id="restante-conta2" style="font-size:18px">—</div>
+            </div>
+          </div>
+          <div class="div"></div>
+          <div class="brow">
+            <button class="bs" onclick="abrirAutorizacaoMeli('conta2')">↗ Abrir autorização MELI</button>
+          </div>
+          <div style="margin-top:12px">
+            <label style="font-size:12px;font-weight:500;color:var(--c5);display:block;margin-bottom:6px">COLE O CÓDIGO DA URL (TG-xxxxx...)</label>
+            <input type="text" id="cod-conta2" placeholder="TG-xxxxxxxxxxxxxxxxxxxxxxxx"
+              style="width:100%;height:40px;border:1.5px solid var(--c3);border-radius:8px;padding:0 12px;font-size:14px;font-family:'DM Mono',monospace;outline:none;background:var(--c1)">
+          </div>
+          <div class="brow" style="margin-top:12px">
+            <button class="bp" onclick="renovarToken('conta2')">✓ Renovar token Conta 2</button>
+          </div>
         </div>
       </section>
 
@@ -493,6 +545,23 @@ function login(){
   document.getElementById('tela-app').style.display='block';
   addLinha();addLinha();addLinha();
   setTimeout(()=>typeof restaurarRascunho==='function'&&restaurarRascunho(),300);
+  // Check token status and show warning if not configured
+  setTimeout(async ()=>{
+    try {
+      const r = await fetch(API+'/api/tokens/status');
+      const d = await r.json();
+      const semToken = ['conta1','conta2'].filter(c=>!d[c]||!d[c].valido);
+      if(semToken.length > 0) {
+        const aviso = document.createElement('div');
+        aviso.id = 'aviso-token';
+        aviso.innerHTML = '<div style="background:#FFF3E0;border:1px solid #FFB74D;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:13px;color:#E65100;display:flex;align-items:center;justify-content:space-between">' +
+          '<span>⚠️ Token MELI não configurado — <a href="#" onclick="nav(\'token\',document.querySelectorAll(\'.ni\')[4])" style="color:var(--az);font-weight:600">Configure aqui antes de criar variações</a></span>' +
+          '<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px">✕</button></div>';
+        const main = document.querySelector('.main');
+        if(main) main.insertBefore(aviso.firstElementChild, main.firstChild);
+      }
+    } catch(e){}
+  }, 800);
   // Inicializa foto padrão embarcada
   fotoPadrao = FOTO_PADRAO_EMBED;
   const fpSt = document.getElementById('fp-status');
@@ -1082,6 +1151,109 @@ window.nav = function(id, el) {
   _navOrig(id, el);
   if(id==='logs') renderizarLogs();
   if(id==='dashboard') atualizarDashboard();
+  if(id==='token') carregarStatusTokens(false);
+};
+
+
+// ═══════════════════════════════════════════════════════════
+// REGISTROS — Meus Registros com logs reais do localStorage
+// ═══════════════════════════════════════════════════════════
+let _filtroAtivo = 'todos';
+
+function filtrarRegistros(tipo) {
+  _filtroAtivo = tipo;
+  ['todos','sim','criar'].forEach(f => {
+    const btn = document.getElementById('filtro-'+f);
+    if(btn) { btn.style.background=''; btn.style.color=''; btn.style.borderColor=''; }
+  });
+  const btnId = tipo === 'todos' ? 'filtro-todos' : tipo === 'simular' ? 'filtro-sim' : 'filtro-criar';
+  const btn = document.getElementById(btnId);
+  if(btn) { btn.style.background='var(--az)'; btn.style.color='white'; btn.style.borderColor='var(--az)'; }
+  renderizarRegistros();
+}
+
+function getStatusInfo(r) {
+  if(r.dry_run || !r.ok && !r.erro) return { label:'Simulado', color:'var(--az)', bg:'#EEF4FF', icon:'🔵' };
+  if(r.ok) {
+    // Check if MLB is valid - try to determine if published or in review
+    const mlb = r.mlb_criado || '';
+    return { label:'Criado', color:'var(--ve)', bg:'#E8F5E9', icon:'✓', mlb };
+  }
+  const erro = r.erro || '';
+  if(erro.includes('processamento') || erro.includes('pending') || erro.includes('under_review')) {
+    return { label:'Em processamento', color:'#F57F17', bg:'#FFF8E1', icon:'⏳' };
+  }
+  return { label:'Erro', color:'var(--vm)', bg:'#FFEBEE', icon:'✗', detalhe: erro };
+}
+
+function renderizarRegistros() {
+  const cont = document.getElementById('registros-container');
+  if(!cont) return;
+
+  const logs = carregarLogs();
+  const filtrados = _filtroAtivo === 'todos' ? logs : logs.filter(l => l.tipo === _filtroAtivo);
+
+  if(!filtrados.length) {
+    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum registro encontrado.<br>As simulações e criações aparecerão aqui.</div>';
+    return;
+  }
+
+  // Flatten: cada resultado individual vira uma linha
+  const linhas = [];
+  filtrados.forEach(log => {
+    (log.resultados || []).forEach(r => {
+      linhas.push({ log, r });
+    });
+  });
+
+  if(!linhas.length) {
+    cont.innerHTML = '<div class="card" style="color:var(--c4);text-align:center;padding:40px">Nenhum registro detalhado disponível.</div>';
+    return;
+  }
+
+  const rows = linhas.map(({log, r}) => {
+    const ts = new Date(log.ts);
+    const data = ts.toLocaleDateString('pt-BR');
+    const hora = ts.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    const st = getStatusInfo(r);
+    const mlbLink = st.mlb
+      ? `<a href="https://www.mercadolivre.com.br/anuncios/${st.mlb}" target="_blank" class="mlbl">${st.mlb}</a>`
+      : '—';
+    const statusBadge = `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;background:${st.bg};color:${st.color}">${st.icon} ${st.label}</span>`;
+    const tipoBadge = log.tipo === 'criar'
+      ? `<span style="font-size:10px;background:#E8F5E9;color:var(--ve);padding:2px 6px;border-radius:4px">CRIAR</span>`
+      : `<span style="font-size:10px;background:#EEF4FF;color:var(--az);padding:2px 6px;border-radius:4px">SIM</span>`;
+    const detalhe = st.detalhe
+      ? `<br><span style="font-size:11px;color:var(--vm)">${st.detalhe.substring(0,80)}</span>`
+      : '';
+    return `<tr>
+      <td style="white-space:nowrap">${data}<br><span style="font-size:11px;color:var(--c4)">${hora}</span></td>
+      <td>${tipoBadge}</td>
+      <td style="font-size:13px">${r.familia || r.variacao || '—'}</td>
+      <td style="font-size:13px">${r.variacao || '—'}</td>
+      <td>${mlbLink}</td>
+      <td style="font-size:12px;color:var(--c5)">${r.conta || '—'}</td>
+      <td>${statusBadge}${detalhe}</td>
+    </tr>`;
+  }).join('');
+
+  cont.innerHTML = `<div class="htable">
+    <table>
+      <thead><tr>
+        <th>Data/Hora</th><th>Tipo</th><th>Família</th><th>Variação</th><th>MLB</th><th>Conta</th><th>Status</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// Hook nav to render registros when section opens
+const _navOrigReg = window.nav;
+window.nav = function(id, el) {
+  _navOrigReg(id, el);
+  if(id === 'historico') { filtrarRegistros(_filtroAtivo || 'todos'); }
+  if(id === 'logs') renderizarLogs();
+  if(id === 'dashboard') atualizarDashboard();
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -1212,12 +1384,50 @@ const API = location.hostname === 'localhost' ? 'http://localhost:5000' : '';
 // A função mock do primeiro script já funciona corretamente
 
 // Status dos tokens
-async function carregarStatusTokens() {
+// APP IDs MELI (para OAuth)
+const MELI_APP_IDS = {conta1: '2598166159105156', conta2: '2598166159105156'};
+
+function abrirAutorizacaoMeli(contaId) {
+  const appId = MELI_APP_IDS[contaId] || '2598166159105156';
+  const url = 'https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=' + appId;
+  window.open(url, '_blank');
+  toast('Autorize no MELI e copie o codigo TG-xxx da URL', 'ok');
+}
+
+async function carregarStatusTokens(showToast) {
   try {
     const r = await fetch(API + '/api/tokens/status');
     const d = await r.json();
     window._tokenStatus = d;
-  } catch(e) {}
+    // Update UI for each conta
+    ['conta1','conta2'].forEach(c => {
+      const info = d[c];
+      if(!info) return;
+      const badge = document.getElementById('badge-'+c);
+      const statusEl = document.getElementById('status-'+c);
+      const expiraEl = document.getElementById('expira-'+c);
+      const restanteEl = document.getElementById('restante-'+c);
+      const card = document.getElementById('card-token-'+c);
+      if(info.valido) {
+        if(badge) { badge.textContent='✓ Válido'; badge.className='badge bok'; }
+        if(statusEl) { statusEl.textContent='● Válido'; statusEl.className='sv vd'; }
+        if(card) card.style.borderLeft='3px solid var(--ve)';
+        const mins = info.minutos_restantes || 0;
+        const h = Math.floor(mins/60), m = mins%60;
+        if(restanteEl) restanteEl.textContent = h+'h '+m+'m';
+        if(expiraEl) expiraEl.textContent = info.expira_em ? 'Expira às '+info.expira_em : '';
+      } else {
+        if(badge) { badge.textContent='✗ '+( info.motivo||'Não configurado'); badge.className='badge berr'; }
+        if(statusEl) { statusEl.textContent='● '+(info.motivo||'Não configurado'); statusEl.className='sv vm'; }
+        if(restanteEl) restanteEl.textContent = '—';
+        if(expiraEl) expiraEl.textContent = '';
+        if(card) card.style.borderLeft='3px solid var(--vm)';
+      }
+    });
+    if(showToast) toast('Status atualizado','ok');
+  } catch(e) {
+    if(showToast) toast('Erro ao verificar tokens','err');
+  }
 }
 
 // Renovar token
@@ -1275,7 +1485,12 @@ async function executar() {
   const cs = contasSel();
   if (!cs.length) { toast('Selecione ao menos uma conta', 'err'); return; }
   const semFoto = dados.filter(d => !getFotoParaVariacao(d.variacao));
-  if (semFoto.length) { toast(semFoto.length + ' variação(ões) sem fotos', 'err'); return; }
+  if (semFoto.length && !window._confirmarSemFoto) {
+    const nomes = semFoto.map(d=>d.variacao).join(', ');
+    if(!confirm('⚠ ' + semFoto.length + ' variação(ões) sem fotos:\n' + nomes + '\n\nDeseja criar assim mesmo (sem fotos)?')) return;
+    window._confirmarSemFoto = true;
+  }
+  window._confirmarSemFoto = false;
 
   // Verificar se tokens estão configurados antes de tentar
   try {
@@ -1531,6 +1746,7 @@ window.nav = function(id, el) {
   _navOrig(id, el);
   if(id==='logs') renderizarLogs();
   if(id==='dashboard') atualizarDashboard();
+  if(id==='token') carregarStatusTokens(false);
 };
 
 // ═══════════════════════════════════════════════════════════
