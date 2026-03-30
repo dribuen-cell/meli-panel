@@ -1,219 +1,328 @@
-from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
-import requests, json, os, time
+import os, json, requests, time
 from datetime import datetime, timedelta
-from pathlib import Path
+from flask import Flask, request, jsonify, send_from_directory
 
-app = Flask(__name__, static_folder="static")
-CORS(app)
+app = Flask(__name__)
 
+# ── Configuração das contas ──────────────────────────────────────────
 CONTAS = {
-    "conta1": {
-        "nome": "JA Comercial",
-        "app_id": os.environ.get("MELI_APP_ID_1", "2598166159105156"),
-        "secret": os.environ.get("MELI_SECRET_1", "EtB7015Db4zhzRvf8mPXSCX00DIwE5Wy"),
-        "redirect": "https://www.universalvendas.com.br",
-        "token_file": "token_conta1.json",
+    'conta1': {
+        'app_id':    os.environ.get('MELI_APP_ID_1', '2598166159105156'),
+        'secret':    os.environ.get('MELI_SECRET_1', 'EtB7015Db4zhzRvf8mPXSCX00DIwE5Wy'),
+        'token_key': 'MELI_TOKEN_1',   # variável de ambiente para o token
+        'nome':      'JA Comercial',
     },
-    "conta2": {
-        "nome": "Universal Vendas",
-        "app_id": os.environ.get("MELI_APP_ID_2", ""),
-        "secret": os.environ.get("MELI_SECRET_2", ""),
-        "redirect": "https://www.universalvendas.com.br",
-        "token_file": "token_conta2.json",
+    'conta2': {
+        'app_id':    os.environ.get('MELI_APP_ID_2', ''),
+        'secret':    os.environ.get('MELI_SECRET_2', ''),
+        'token_key': 'MELI_TOKEN_2',
+        'nome':      'Universal Vendas',
     },
 }
 
-USUARIOS = {
-    "adriana": {"senha": os.environ.get("SENHA_ADRIANA", "ja2026"), "cargo": "Administrador"},
-    "joao":    {"senha": os.environ.get("SENHA_JOAO",    "ja2026"), "cargo": "Operador"},
-    "maria":   {"senha": os.environ.get("SENHA_MARIA",   "ja2026"), "cargo": "Operador"},
+BASE_URL   = 'https://api.mercadolibre.com'
+REDIRECT   = 'https://meli-panel.onrender.com/callback'
+
+# Senhas dos usuários
+SENHAS = {
+    'adriana': os.environ.get('SENHA_ADRIANA', '123456'),
+    'joao':    os.environ.get('SENHA_JOAO',    '123456'),
 }
 
-BASE_URL = "https://api.mercadolibre.com"
-ATRIBUTOS_IGNORAR = {"COLOR", "SELLER_SKU", "PRODUCT_FEATURES"}
-
+# ── Armazenamento de tokens em memória + env var ──────────────────────
+# Em produção: token fica na variável de ambiente MELI_TOKEN_1 (JSON)
+# Em memória durante a sessão para não perder entre requests
+_tokens_cache = {}
 
 def carregar_token(conta_id):
-    path = CONTAS[conta_id]["token_file"]
-    if not os.path.exists(path):
-        return None
-    with open(path) as f:
-        return json.load(f)
-
+    # 1. Tenta cache em memória
+    if conta_id in _tokens_cache:
+        return _tokens_cache[conta_id]
+    # 2. Tenta variável de ambiente
+    key = CONTAS[conta_id]['token_key']
+    raw = os.environ.get(key)
+    if raw:
+        try:
+            data = json.loads(raw)
+            _tokens_cache[conta_id] = data
+            return data
+        except Exception:
+            pass
+    return None
 
 def salvar_token(conta_id, data):
-    with open(CONTAS[conta_id]["token_file"], "w") as f:
-        json.dump(data, f, indent=2)
-
+    # Salva no cache em memória (persiste enquanto o servidor estiver rodando)
+    _tokens_cache[conta_id] = data
+    # NOTA: para persistir entre deploys, configure a env var no Render:
+    # MELI_TOKEN_1 = {"access_token":"...","expires_at":"...","refresh_token":"..."}
 
 def token_valido(conta_id):
     data = carregar_token(conta_id)
     if not data:
-        return None, "Token não encontrado"
-    expires_at = datetime.fromisoformat(data.get("expires_at", "2000-01-01"))
-    if datetime.now() >= expires_at - timedelta(minutes=5):
-        return None, "Token expirado"
-    return data["access_token"], None
-
+        return None, 'Token não encontrado'
+    try:
+        expires_at = datetime.fromisoformat(data.get('expires_at', '2000-01-01'))
+        if datetime.now() >= expires_at - timedelta(minutes=5):
+            # Tentar renovar via refresh_token automaticamente
+            refresh = data.get('refresh_token')
+            if refresh:
+                conta = CONTAS[conta_id]
+                r = requests.post(BASE_URL + '/oauth/token', data={
+                    'grant_type':    'refresh_token',
+                    'client_id':     conta['app_id'],
+                    'client_secret': conta['secret'],
+                    'refresh_token': refresh,
+                })
+                if r.status_code == 200:
+                    novo = r.json()
+                    novo['expires_at'] = (datetime.now() + timedelta(seconds=novo.get('expires_in', 21600))).isoformat()
+                    salvar_token(conta_id, novo)
+                    return novo['access_token'], None
+            return None, 'Token expirado'
+        return data['access_token'], None
+    except Exception as e:
+        return None, f'Erro ao validar token: {str(e)}'
 
 def headers_auth(token):
-    return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    return {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
 
+# ── Rotas ─────────────────────────────────────────────────────────────
 
-@app.route("/api/login", methods=["POST"])
+@app.route('/')
+def index():
+    return send_from_directory('static', 'index.html')
+
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok', 'timestamp': datetime.now().isoformat()})
+
+@app.route('/api/login', methods=['POST'])
 def login():
-    body = request.json
-    usuario = body.get("usuario", "").lower()
-    senha = body.get("senha", "")
-    user = USUARIOS.get(usuario)
-    if not user or user["senha"] != senha:
-        return jsonify({"ok": False, "erro": "Usuário ou senha inválidos"}), 401
-    return jsonify({"ok": True, "nome": usuario.capitalize(), "cargo": user["cargo"]})
+    body = request.json or {}
+    usuario = body.get('usuario', '').lower()
+    senha   = body.get('senha', '')
+    if usuario in SENHAS and SENHAS[usuario] != senha:
+        return jsonify({'ok': False, 'erro': 'Senha incorreta'}), 401
+    nomes = {'adriana': 'Adriana', 'joao': 'João'}
+    cargos= {'adriana': 'Administrador', 'joao': 'Operador'}
+    nome = nomes.get(usuario, usuario.capitalize())
+    return jsonify({'ok': True, 'nome': nome, 'cargo': cargos.get(usuario, 'Operador')})
 
-
-@app.route("/api/tokens/status")
+@app.route('/api/tokens/status')
 def tokens_status():
-    resultado = {}
-    for cid, conf in CONTAS.items():
-        data = carregar_token(cid)
+    result = {}
+    for conta_id in CONTAS:
+        data = carregar_token(conta_id)
         if not data:
-            resultado[cid] = {"valido": False, "motivo": "Não configurado"}
+            result[conta_id] = {'valido': False, 'motivo': 'Não configurado'}
             continue
-        expires_at = datetime.fromisoformat(data.get("expires_at", "2000-01-01"))
-        restante = expires_at - datetime.now()
-        valido = restante.total_seconds() > 0
-        resultado[cid] = {
-            "valido": valido,
-            "nome": conf["nome"],
-            "expira": expires_at.strftime("%H:%M"),
-            "restante_min": max(0, int(restante.total_seconds() // 60)),
-        }
-    return jsonify(resultado)
+        try:
+            expires_at = datetime.fromisoformat(data.get('expires_at', '2000-01-01'))
+            mins = int((expires_at - datetime.now()).total_seconds() / 60)
+            if mins <= 5:
+                result[conta_id] = {'valido': False, 'motivo': 'Expirado', 'minutos_restantes': mins}
+            else:
+                result[conta_id] = {'valido': True, 'minutos_restantes': mins}
+        except Exception:
+            result[conta_id] = {'valido': False, 'motivo': 'Erro'}
+    return jsonify(result)
 
-
-@app.route("/api/tokens/renovar", methods=["POST"])
+@app.route('/api/tokens/renovar', methods=['POST'])
 def renovar_token():
-    body = request.json
-    conta_id = body.get("conta")
-    codigo = body.get("codigo", "").strip()
-    if conta_id not in CONTAS:
-        return jsonify({"ok": False, "erro": "Conta inválida"}), 400
-    conf = CONTAS[conta_id]
-    r = requests.post(f"{BASE_URL}/oauth/token", data={
-        "grant_type": "authorization_code",
-        "client_id": conf["app_id"],
-        "client_secret": conf["secret"],
-        "code": codigo,
-        "redirect_uri": conf["redirect"],
-    })
-    if r.status_code != 200:
-        return jsonify({"ok": False, "erro": r.json().get("message", "Erro desconhecido")}), 400
-    data = r.json()
-    data["expires_at"] = (datetime.now() + timedelta(seconds=data.get("expires_in", 21600))).isoformat()
-    salvar_token(conta_id, data)
-    return jsonify({"ok": True, "expira": data["expires_at"]})
+    body    = request.json or {}
+    conta_id= body.get('conta', 'conta1')
+    codigo  = body.get('codigo', '').strip()
+    if not codigo:
+        return jsonify({'ok': False, 'erro': 'Código não informado'}), 400
+    conta = CONTAS.get(conta_id)
+    if not conta:
+        return jsonify({'ok': False, 'erro': 'Conta inválida'}), 400
+    try:
+        r = requests.post(BASE_URL + '/oauth/token', data={
+            'grant_type':   'authorization_code',
+            'client_id':     conta['app_id'],
+            'client_secret': conta['secret'],
+            'code':          codigo,
+            'redirect_uri':  REDIRECT,
+        })
+        d = r.json()
+        if r.status_code != 200:
+            return jsonify({'ok': False, 'erro': d.get('message', str(d))}), 400
+        d['expires_at'] = (datetime.now() + timedelta(seconds=d.get('expires_in', 21600))).isoformat()
+        salvar_token(conta_id, d)
+        # Instrução para persistir
+        token_json = json.dumps({
+            'access_token':  d['access_token'],
+            'refresh_token': d.get('refresh_token', ''),
+            'expires_at':    d['expires_at'],
+        })
+        return jsonify({
+            'ok': True,
+            'expires_at': d['expires_at'],
+            'dica': f'Para persistir entre deploys, salve no Render: {conta["token_key"]} = {token_json}'
+        })
+    except Exception as e:
+        return jsonify({'ok': False, 'erro': str(e)}), 500
 
-
-@app.route("/api/fotos/upload", methods=["POST"])
-def upload_foto():
-    conta_id = request.form.get("conta", "conta1")
+@app.route('/api/tokens/auto-renovar', methods=['POST'])
+def auto_renovar():
+    body     = request.json or {}
+    conta_id = body.get('conta', 'conta1')
     token, erro = token_valido(conta_id)
     if erro:
-        return jsonify({"ok": False, "erro": erro}), 401
-    if "foto" not in request.files:
-        return jsonify({"ok": False, "erro": "Nenhuma foto enviada"}), 400
-    foto = request.files["foto"]
-    r = requests.post(f"{BASE_URL}/pictures",
-        headers={"Authorization": f"Bearer {token}"},
-        files={"file": (foto.filename, foto.read(), foto.content_type)})
-    if r.status_code in (200, 201):
-        return jsonify({"ok": True, "picture_id": r.json().get("id")})
-    return jsonify({"ok": False, "erro": r.text[:200]}), 400
+        return jsonify({'ok': False, 'erro': erro})
+    return jsonify({'ok': True})
 
+@app.route('/callback')
+def callback():
+    code = request.args.get('code', '')
+    return f'''<html><body style="font-family:sans-serif;padding:40px;text-align:center">
+    <h2>✓ Código recebido!</h2>
+    <p>Copie o código abaixo e cole no painel:</p>
+    <div style="background:#f5f5f5;padding:16px;border-radius:8px;font-family:monospace;font-size:16px;margin:20px 0;word-break:break-all">{code}</div>
+    <button onclick="navigator.clipboard.writeText('{code}').then(()=>this.textContent='Copiado!')" 
+      style="background:#FFE600;border:none;padding:12px 24px;border-radius:8px;font-size:16px;cursor:pointer;font-weight:600">
+      Copiar código
+    </button>
+    <p style="margin-top:20px;color:#666">Você pode fechar esta aba após copiar.</p>
+    </body></html>'''
 
-@app.route("/api/variacoes/criar", methods=["POST"])
+@app.route('/api/fotos/upload', methods=['POST'])
+def upload_foto():
+    conta_id = request.form.get('conta', 'conta1')
+    token, erro = token_valido(conta_id)
+    if erro:
+        return jsonify({'ok': False, 'erro': erro}), 401
+    foto = request.files.get('foto')
+    if not foto:
+        return jsonify({'ok': False, 'erro': 'Nenhuma foto enviada'}), 400
+    try:
+        r = requests.post(
+            BASE_URL + '/pictures/items/upload',
+            headers={'Authorization': f'Bearer {token}'},
+            files={'file': (foto.filename, foto.stream, foto.mimetype)}
+        )
+        d = r.json()
+        if r.status_code not in (200, 201):
+            return jsonify({'ok': False, 'erro': d.get('message', str(d))}), 400
+        return jsonify({'ok': True, 'picture_id': d.get('id')})
+    except Exception as e:
+        return jsonify({'ok': False, 'erro': str(e)}), 500
+
+@app.route('/api/variacoes/criar', methods=['POST'])
 def criar_variacao():
-    body = request.json
-    contas_sel = body.get("contas", ["conta1"])
-    linhas = body.get("linhas", [])
-    fotos_banco = body.get("fotos_banco", {})
-    dry_run = body.get("dry_run", False)
-    resultados = []
+    body         = request.json or {}
+    contas_sel   = body.get('contas', ['conta1'])
+    linhas       = body.get('linhas', [])
+    fotos_banco  = body.get('fotos_banco', {})
+    dry_run      = body.get('dry_run', False)
+    resultados   = []
+
     for conta_id in contas_sel:
         token, erro = token_valido(conta_id)
         if erro:
-            resultados.append({"conta": conta_id, "ok": False, "erro": erro})
+            for linha in linhas:
+                resultados.append({
+                    'conta':    conta_id,
+                    'familia':  str(linha.get('familia_id','')),
+                    'variacao': linha.get('variacao',''),
+                    'ok':       False,
+                    'erro':     erro,
+                })
             continue
+
         for linha in linhas:
-            mlbu = str(linha.get("familia_id", "")).strip()
-            variacao = linha.get("variacao", "").strip()
-            preco = float(linha.get("preco", 0))
-            estoque = int(linha.get("estoque", 0))
-            sku = linha.get("sku", "")
-            ean = linha.get("ean", "")
-            peso_g = linha.get("peso_g")
-            altura_cm = linha.get("altura_cm")
-            largura_cm = linha.get("largura_cm")
-            comp_cm = linha.get("comprimento_cm")
+            familia_id = str(linha.get('familia_id', '')).strip()
+            variacao   = linha.get('variacao', '').strip()
+            preco      = float(linha.get('preco', 0))
+            estoque    = int(linha.get('estoque', 0))
+            sku        = linha.get('sku', '')
+            ean        = linha.get('ean', '')
+            peso_g     = linha.get('peso_g')
+            altura_cm  = linha.get('altura_cm')
+            largura_cm = linha.get('largura_cm')
+            comp_cm    = linha.get('comprimento_cm')
+
+            # Mapa de atributos padrão para variações
             MAPA = {
-                "1440439500323454": "MLB6433755258",
-                "2463760158107016": "MLB6463760042",
-                "764882427383523":  "MLB6451920282",
+                'cor':    'COLOR',
+                'tamanho':'SIZE',
+                'modelo': 'MODEL',
             }
-            mlb_ref = MAPA.get(mlbu)
-            if not mlb_ref:
-                resultados.append({"conta": conta_id, "familia": mlbu, "variacao": variacao, "ok": False, "erro": f"Família {mlbu} não mapeada"})
-                continue
-            r = requests.get(f"{BASE_URL}/items/{mlb_ref}", headers=headers_auth(token))
-            if r.status_code != 200:
-                resultados.append({"conta": conta_id, "familia": mlbu, "variacao": variacao, "ok": False, "erro": f"Erro ao buscar template {mlb_ref}"})
-                continue
-            template = r.json()
-            atribs = [a for a in template.get("attributes", []) if a.get("id") not in ATRIBUTOS_IGNORAR]
-            atribs.append({"id": "COLOR", "value_name": variacao})
-            if sku: atribs.append({"id": "SELLER_SKU", "value_name": sku})
-            if ean: atribs.append({"id": "GTIN", "value_name": ean})
-            if peso_g: atribs.append({"id": "SELLER_PACKAGE_WEIGHT", "value_name": f"{int(float(peso_g))} g"})
-            if altura_cm: atribs.append({"id": "SELLER_PACKAGE_HEIGHT", "value_name": f"{int(float(altura_cm))} cm"})
-            if largura_cm: atribs.append({"id": "SELLER_PACKAGE_WIDTH", "value_name": f"{int(float(largura_cm))} cm"})
-            if comp_cm: atribs.append({"id": "SELLER_PACKAGE_LENGTH", "value_name": f"{int(float(comp_cm))} cm"})
-            picture_ids = fotos_banco.get(variacao, {}).get("picture_ids", [])
+
+            # Fotos da variação
+            picture_ids = []
+            fb = fotos_banco.get(variacao, {})
+            if isinstance(fb, dict):
+                picture_ids = fb.get('picture_ids', [])
+
+            # Dimensões
+            shipping_dimensions = None
+            if peso_g or altura_cm or largura_cm or comp_cm:
+                shipping_dimensions = {
+                    'weight': {'value': float(peso_g or 0), 'unit': 'g'},
+                    'dimensions': {
+                        'height':  {'value': float(altura_cm or 0),  'unit': 'cm'},
+                        'width':   {'value': float(largura_cm or 0), 'unit': 'cm'},
+                        'length':  {'value': float(comp_cm or 0),    'unit': 'cm'},
+                    }
+                }
+
+            # Atributos da variação
+            atributos = [{'id': 'SELLER_SKU', 'value_name': sku}] if sku else []
+            if ean:
+                atributos.append({'id': 'EAN', 'value_name': ean})
+
+            variacao_payload = {
+                'attribute_combinations': [{'id': 'COLOR', 'value_name': variacao}],
+                'price':    preco,
+                'available_quantity': estoque,
+                'attributes': atributos,
+                'picture_ids': picture_ids,
+            }
+            if shipping_dimensions:
+                variacao_payload['shipping_dimensions'] = shipping_dimensions
+
             payload = {
-                "category_id": template.get("category_id"),
-                "domain_id": template.get("domain_id"),
-                "family_name": template.get("family_name"),
-                "price": preco,
-                "available_quantity": estoque,
-                "listing_type_id": template.get("listing_type_id", "gold_special"),
-                "buying_mode": "buy_it_now",
-                "condition": template.get("condition", "new"),
-                "currency_id": "BRL",
-                "attributes": atribs,
-                "shipping": {"mode": "me2"},
+                'catalog_product_id': familia_id,
+                'variations': [variacao_payload],
             }
-            if picture_ids: payload["pictures"] = [{"id": pid} for pid in picture_ids]
+
             if dry_run:
-                resultados.append({"conta": conta_id, "familia": mlbu, "variacao": variacao, "ok": True, "dry_run": True, "payload_resumo": f"R${preco} | {len(picture_ids)} fotos"})
+                resultados.append({
+                    'conta':   conta_id, 'familia': familia_id, 'variacao': variacao,
+                    'ok':      True, 'dry_run': True,
+                    'payload_resumo': f'R${preco:.2f} | {len(picture_ids)} fotos | {estoque} estoque',
+                })
                 continue
-            r2 = requests.post(f"{BASE_URL}/items", headers=headers_auth(token), json=payload)
-            if r2.status_code in (200, 201):
-                resultados.append({"conta": conta_id, "familia": mlbu, "variacao": variacao, "ok": True, "mlb_criado": r2.json().get("id", "?")})
-            else:
-                resultados.append({"conta": conta_id, "familia": mlbu, "variacao": variacao, "ok": False, "erro": r2.json().get("message", r2.text[:200]), "cause": r2.json().get("cause", [])})
-            time.sleep(0.5)
-    return jsonify({"ok": True, "resultados": resultados})
 
+            try:
+                r = requests.post(
+                    BASE_URL + '/items',
+                    headers=headers_auth(token),
+                    json=payload,
+                    timeout=30,
+                )
+                d = r.json()
+                if r.status_code in (200, 201):
+                    resultados.append({
+                        'conta': conta_id, 'familia': familia_id, 'variacao': variacao,
+                        'ok': True, 'mlb_criado': d.get('id', '?'),
+                    })
+                else:
+                    resultados.append({
+                        'conta': conta_id, 'familia': familia_id, 'variacao': variacao,
+                        'ok': False, 'erro': d.get('message', r.text[:200]),
+                        'cause': d.get('cause', []),
+                    })
+            except Exception as e:
+                resultados.append({
+                    'conta': conta_id, 'familia': familia_id, 'variacao': variacao,
+                    'ok': False, 'erro': str(e),
+                })
+            time.sleep(0.3)
 
-@app.route("/")
-def index():
-    return send_from_directory("static", "index.html")
+    return jsonify({'ok': True, 'resultados': resultados})
 
-
-@app.route("/health")
-def health():
-    return jsonify({"status": "ok", "timestamp": datetime.now().isoformat()})
-
-
-if __name__ == "__main__":
-    app.run(debug=False, port=int(os.environ.get("PORT", 5000)))
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
